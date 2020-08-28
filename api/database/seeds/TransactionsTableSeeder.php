@@ -15,21 +15,24 @@ class TransactionsTableSeeder extends Seeder
             'from' => 1,
             'to' => 2,
             'details' => 'sample transaction',
-            'amount' => 14
+            'amount' => 14,
+			'message' => 'Tell your mom hi for me'
         ]);
 
         DB::table('transactions')->insert([
             'from' => 1,
             'to' => 2,
             'details' => 'sample transaction 2',
-            'amount' => 24
+            'amount' => 24, 
+			'message' => 'This is for dinner the other day'
         ]);
 
         DB::table('transactions')->insert([
             'from' => 2,
             'to' => 1,
             'details' => 'sample transaction 3',
-            'amount' => 15
+            'amount' => 15,
+			'message' => 'IOU like 10 more'
         ]);
     }
 }

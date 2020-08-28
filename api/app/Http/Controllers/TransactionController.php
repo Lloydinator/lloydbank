@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Account;
 
-class AccountController extends Controller
+class TransactionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,8 +13,7 @@ class AccountController extends Controller
      */
     public function index()
     {
-        $accounts = Account::all()->toJson(JSON_PRETTY_PRINT);
-		return response($accounts, 200);
+        //
     }
 
     /**

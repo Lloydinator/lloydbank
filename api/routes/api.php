@@ -20,8 +20,12 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::get('accounts', 'AccountController@index');
 Route::get('account/{id}', 'AccountController@show');
+Route::post('accounts/', 'AccountController@store');
+Route::put('account/{id}', 'AccountController@update');
+Route::delete('account/{id}', 'AccountController@delete');
 
-
+Route::get('accounts/{id}/transactions', 'TransactionController@index');
+//Route::post('accounts/{id}/transaction/', 'Transaction')
 
 /*
 Route::get('/', function () {
