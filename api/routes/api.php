@@ -21,6 +21,10 @@ Route::post('account/create', 'AccountController@store');
 Route::put('account/{id}', 'AccountController@update');
 Route::delete('account/{id}', 'AccountController@delete');
 
-Route::post('account/new/transaction', 'TransactionController@store');
-Route::get('accounts/all/transactions', 'TransactionController@index');
-Route::get('account/{id}/transactions', 'TransactionController@show');
+Route::post('transaction/new', 'TransactionController@store');
+Route::get('transactions/all', 'TransactionController@index');
+Route::get('transaction/account/{id}', 'TransactionController@show');
+
+Route::get('currencies', function(){
+	return \App\Currency::all();
+});
