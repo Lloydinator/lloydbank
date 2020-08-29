@@ -18,69 +18,60 @@ class AccountController extends Controller
 		return response($accounts, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+		$this->validate($request, [
+			'name' => 'required',
+			'balance' => 'required'
+		]);
+		
+		$account = new Account();
+		$account->name = $request->name;
+		$account->balance = $request->balance;
+		
+		if ($account->save()){
+			return response()->json([
+				'message' => 'New account information saved.'
+			]);
+		}
+		else {
+			return response()->json([
+				'message' => 'Something went wrong.'
+			]);
+		}
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
-        //
+        if (Account::where('id', $id)->exists()){
+			$account = Account::where('id', $id)->get()->toJson(JSON_PRETTY_PRINT);
+			return response($account, 200);
+		}
+		else {
+			return response()->json([
+				'message' => 'Not found'
+			], 404);
+		}
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        $this->validate([
+			'name' => 'required',
+		]);
+		
+		$account = Account::find($id);
+		$account->name = $require->name;
+		
+		if ($account->save()){
+			return response()->json([
+				'message' => 'Your account information has been updated.'
+			]);
+		}
+		else {
+			return response()->json([
+				'message' => 'Something went wrong.'
+			]);
+		}
     }
 }

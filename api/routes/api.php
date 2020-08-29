@@ -14,69 +14,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 Route::get('accounts', 'AccountController@index');
 Route::get('account/{id}', 'AccountController@show');
-Route::post('accounts/', 'AccountController@store');
+Route::post('account/create', 'AccountController@store');
 Route::put('account/{id}', 'AccountController@update');
 Route::delete('account/{id}', 'AccountController@delete');
 
-Route::get('accounts/{id}/transactions', 'TransactionController@index');
-//Route::post('accounts/{id}/transaction/', 'Transaction')
-
-/*
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::prefix('api')->group(function() {
-    Route::get('accounts/{id}', function ($id) {
-        $account = DB::table('accounts')
-            ->whereRaw("id=$id")
-            ->get();
-
-        return $account;
-    });
-
-    Route::get('accounts/{id}/transactions', function ($id) {
-        $account = DB::table('transactions')
-            ->whereRaw("`from`=$id OR `to`=$id")
-            ->get();
-
-        return $account;
-    });
-
-    Route::post('accounts/{id}/transactions', function (Request $request, $id) {
-        $to = $request->input('to');
-        $amount = $request->input('amount');
-        $details = $request->input('details');
-
-        $account = DB::table('accounts')
-            ->whereRaw("id=$id")
-            ->update(['balance' => DB::raw('balance-' . $amount)]);
-
-        $account = DB::table('accounts')
-            ->whereRaw("id=$to")
-            ->update(['balance' => DB::raw('balance+' . $amount)]);
-
-        DB::table('transactions')->insert(
-            [
-                'from' => $id,
-                'to' => $to,
-                'amount' => $amount,
-                'details' => $details
-            ]
-        );
-    });
-
-    Route::get('currencies', function () {
-        $account = DB::table('currencies')
-            ->get();
-
-        return $account;
-    });
-});
-*/
+Route::post('account/new/transaction', 'TransactionController@store');
+Route::get('accounts/all/transactions', 'TransactionController@index');
+Route::get('account/{id}/transactions', 'TransactionController@show');

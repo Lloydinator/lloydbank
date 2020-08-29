@@ -16,14 +16,16 @@ class TransactionsTableSeeder extends Seeder
             'to' => 2,
             'details' => 'sample transaction',
             'amount' => 14,
-			'message' => 'Tell your mom hi for me'
+			'currency_id' => 1,
+			'message' => 'Tell your mom hi for me'			
         ]);
 
         DB::table('transactions')->insert([
             'from' => 1,
             'to' => 2,
             'details' => 'sample transaction 2',
-            'amount' => 24, 
+            'amount' => 24,
+			'currency_id' => 1,
 			'message' => 'This is for dinner the other day'
         ]);
 
@@ -32,6 +34,7 @@ class TransactionsTableSeeder extends Seeder
             'to' => 1,
             'details' => 'sample transaction 3',
             'amount' => 15,
+			'currency_id' => 1,
 			'message' => 'IOU like 10 more'
         ]);
     }
