@@ -17,7 +17,7 @@ class CreateAccountsTable extends Migration
             $table->id();
             $table->text('name');
             $table->float('balance');
-            $table->text('currency');
+            $table->text('currency_id')->nullable();
 			$table->timestamps();
         });
     }
