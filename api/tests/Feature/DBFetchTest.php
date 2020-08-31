@@ -19,11 +19,10 @@ class DBFetchTest extends TestCase
     public function testFetchingAccountsFromDatabase(){
         $this->getJson('/api/accounts')
 			->assertStatus(200);
-    }
+    }	
 	
 	public function testFetchingTxnFromDatabase(){
 		$this->getJson('/api/transactions/account/1')
 			->assertStatus(200);
 	}
-	
 }
