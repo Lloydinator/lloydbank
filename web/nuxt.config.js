@@ -1,3 +1,4 @@
+const path = require('path')
 
 export default {
   mode: 'universal',
@@ -23,6 +24,7 @@ export default {
   ** Global CSS
   */
   css: [
+    './assets/tailwind.css',
   ],
   /*
   ** Plugins to load before mounting the App
@@ -46,7 +48,12 @@ export default {
     '@nuxtjs/pwa',
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
+    'nuxt-purgecss',
   ],
+  purgeCSS: {
+    mode: 'postcss',
+    enabled: (process.env.NODE_ENV === 'production')
+  },
   /*
   ** Axios module configuration
   ** See https://axios.nuxtjs.org/options
@@ -57,9 +64,16 @@ export default {
   ** Build configuration
   */
   build: {
-    /*
-    ** You can extend webpack config here
-    */
+    postcss: {
+      plugins: {
+        'postcss-import': {},
+        tailwindcss: path.resolve(__dirname, 'tailwind.config.js'),
+        'postcss-nested': {}
+      }
+    },
+    preset: {
+      stage: 1
+    },
     extend (config, ctx) {
     }
   }
