@@ -1,6 +1,6 @@
-# ybank
+# lloydbank
 
-> ybank - frontend
+> lloydank - frontend
 
 ## Build Setup
 

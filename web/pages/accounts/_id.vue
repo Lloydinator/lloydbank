@@ -3,16 +3,15 @@
     <div class="container" v-if="loading">loading...</div>
 
     <div class="container" v-if="!loading">
-      <b-card :header="'Welcome, ' + account.name" class="mt-3">
+      <b-card :header="'Welcome, ' + 'Lloyd'" class="mt-3">
         <b-card-text>
           <div>
-            Account: <code>{{ account.id }}</code>
+            Account: <code>1</code>
           </div>
           <div>
             Balance:
             <code
-              >{{ account.currency === "usd" ? "$" : "€"
-              }}{{ account.balance }}</code
+              >$5000</code
             >
           </div>
         </b-card-text>
@@ -69,9 +68,7 @@
         </b-form>
       </b-card>
 
-      <b-card class="mt-3" header="Payment History">
-        <b-table striped hover :items="transactions"></b-table>
-      </b-card>
+      <t-table></t-table>
     </div>
   </div>
 </template>
@@ -97,10 +94,10 @@ export default {
     const that = this;
 
     axios
-      .get(`http://localhost:8000/api/accounts/${this.$route.params.id}`)
+      .get(`http://localhost:8000/api/account/${this.$route.params.id}`)
       .then(function(response) {
         if (!response.data.length) {
-          window.location = "/";
+          window.location.href = "/";
         } else {
           that.account = response.data[0];
 
@@ -112,17 +109,17 @@ export default {
 
     axios
       .get(
-        `http://localhost:8000/api/accounts/${
-          that.$route.params.id
-        }/transactions`
+        `http://localhost:8000/api/transactions/account/${
+          this.$route.params.id
+        }`
       )
       .then(function(response) {
         that["transactions"] = response.data;
-
+        
         var transactions = [];
         for (let i = 0; i < that.transactions.length; i++) {
           that.transactions[i].amount =
-            (that.account.currency === "usd" ? "$" : "€") +
+            (that.account.currency_id === 1 ? "$" : "€") +
             that.transactions[i].amount;
 
           if (that.account.id != that.transactions[i].to) {
@@ -163,7 +160,7 @@ export default {
           .get(`http://localhost:8000/api/accounts/${this.$route.params.id}`)
           .then(function(response) {
             if (!response.data.length) {
-              window.location = "/";
+              window.location.href = "/";
             } else {
               that.account = response.data[0];
             }
@@ -171,9 +168,9 @@ export default {
 
         axios
           .get(
-            `http://localhost:8000/api/accounts/${
+            `http://localhost:8000/api/transactions/account/${
               that.$route.params.id
-            }/transactions`
+            }`
           )
           .then(function(response) {
             that["transactions"] = response.data;

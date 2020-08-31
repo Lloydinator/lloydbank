@@ -34,8 +34,8 @@ class TransactionsTableSeeder extends Seeder
             'to' => 1,
             'details' => 'sample transaction 3',
             'amount' => 15,
-			'currency_id' => 1,
-			'message' => 'IOU like $10 more'
+			'currency_id' => 2,
+			'message' => 'IOU like 10 euros more'
         ]);
     }
 }
