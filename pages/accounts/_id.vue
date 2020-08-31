@@ -79,6 +79,7 @@
             >Submit</b-button>
         </b-form>
       </b-card>
+
       <div class="flex justify-center mb-8">
         <div class="inline-block border bg-white rounded mx-auto mt-20">
           <div class="py-2 pb-4 w-full">
@@ -125,7 +126,7 @@ export default {
     const that = this;
 
     axios
-      .get(`http://localhost:8000/api/account/${this.$route.params.id}`)
+      .get(`https://fast-shore-29582.herokuapp.com/api/account/${this.$route.params.id}`)
       .then(function(response) {
         if (!response.data.length) {
           window.location.href = "/";
@@ -140,7 +141,7 @@ export default {
 
     axios
       .get(
-        `http://localhost:8000/api/transactions/account/${
+        `https://fast-shore-29582.herokuapp.com/api/transactions/account/${
           this.$route.params.id
         }`
       )
@@ -152,10 +153,6 @@ export default {
           that.transactions[i].amount =
             (that.transactions[i].currency_id === 1 ? "$" : "€") +
             that.transactions[i].amount;
-
-          if (that.account.id != that.transactions[i].to) {
-            that.transactions[i].amount = "-" + that.transactions[i].amount;
-          }
 
           transactions.push(that.transactions[i]);
         }
@@ -177,7 +174,7 @@ export default {
       //Update items on page after post
       const fetchInfo = () => {
         axios
-          .get(`http://localhost:8000/api/account/${this.$route.params.id}`)
+          .get(`https://fast-shore-29582.herokuapp.com/api/account/${this.$route.params.id}`)
           .then(function(response) {
             if (!response.data.length) {
               window.location.href = "/";
@@ -188,7 +185,7 @@ export default {
 
         axios
           .get(
-            `http://localhost:8000/api/transactions/account/${
+            `https://fast-shore-29582.herokuapp.com/api/transactions/account/${
               that.$route.params.id
             }`
           )
@@ -198,12 +195,8 @@ export default {
             var transactions = [];
             for (let i = 0; i < that.transactions.length; i++) {
               that.transactions[i].amount =
-                (that.account.currency === 1 ? "$" : "€") +
+                (that.transactions[i].currency === 1 ? "$" : "€") +
                 that.transactions[i].amount;
-
-              if (that.account.id != that.transactions[i].to) {
-                that.transactions[i].amount = "-" + that.transactions[i].amount;
-              }
 
               transactions.push(that.transactions[i]);
             }
@@ -214,7 +207,7 @@ export default {
 
       //Post data
       axios.post(
-        `http://localhost:8000/api/transaction/new/`,
+        `https://fast-shore-29582.herokuapp.com/api/transaction/new/`,
         this.payment,
       ).then(res => {
         alert(res.data.message);
