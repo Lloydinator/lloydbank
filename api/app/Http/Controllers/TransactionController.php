@@ -8,15 +8,9 @@ use App\Account;
 
 class TransactionController extends Controller
 {
-
-    public function index()
-	{
-		$txn = Transaction::all();
-		return $txn;
-	}
-
     public function store(Request $request)
     {
+		//Validation
 		$this->validate($request, [
 			'from' => 'required',
 			'to' => 'required',
@@ -25,6 +19,7 @@ class TransactionController extends Controller
 			'message' => 'required'
 		]);
 		
+		//Set variables for binding
 		$txnList = Transaction::all();
 		$transaction = new Transaction;
 		$txnCount = $txnList->count();
@@ -48,6 +43,11 @@ class TransactionController extends Controller
 				$transaction->message = $message;
 				
 				if ($transaction->save()){
+					//Convert currency from euros to USD to report balance in USD
+					if ($currency_id = 2){
+						$amount = $amount / 0.84;
+					}
+					//Store new balance
 					$newBalance->balance = $newBalance->balance - $amount;
 					$newBalanceTo->balance = $newBalanceTo->balance + $amount;
 					$newBalance->save();
@@ -78,15 +78,8 @@ class TransactionController extends Controller
 
     public function show($id)
     {
-		if (Account::where('id', $id)->exists()){
-			$txn = Transaction::where('from', $id)->get()->toJson(JSON_PRETTY_PRINT);
-			return response($txn, 200);
-		}
-		else {
-			return response()->json([
-				'message' => 'Not found'
-			], 404);
-		}
+		$txn = Account::find(1)->transactions()->where('from', $id)->get()->toJson(JSON_PRETTY_PRINT);
+		return $txn;
 	}
 	
 	//Shouldn't be able to delete a transaction

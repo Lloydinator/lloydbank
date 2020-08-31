@@ -11,14 +11,6 @@ class AccountsTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('accounts')->insert([
-            'name' => 'John',
-            'balance' => 15000
-        ]);
-
-        DB::table('accounts')->insert([
-            'name' => 'Peter',
-            'balance' => 100000
-        ]);
+        factory(App\Account::class, 25)->create();
     }
 }
