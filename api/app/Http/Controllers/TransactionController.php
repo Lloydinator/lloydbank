@@ -41,7 +41,7 @@ class TransactionController extends Controller
 		$newBalance = Account::find($from);
 		$newBalanceTo = Account::find($to);
 		
-		if ($newBalance['balance'] > 0){
+		if (isset($newBalance['balance']) && $newBalance['balance'] > 0){
 			if ($from !== $to && $amount <= $newBalance->balance){
 				$transaction->from = $from;
 				$transaction->to = $to;
@@ -79,7 +79,7 @@ class TransactionController extends Controller
 		}
 		else {
 			return response()->json([
-				'message' => 'You don\'t have enough money to send' 
+				'message' => 'Something went wrong. You may not have enough money to send' 
 			]);
 		}
 	}
