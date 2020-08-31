@@ -1,22 +1,6 @@
-# lloydbank
+# The Frontend of the App
 
-> lloydank - frontend
+If you did not create a backend, all you'll have to do is cd into the 'web' folder and run `npm install`. Once everything is installed, go to `pages/accounts/_id.vue`. Everywhere you see a link, just replace `http://localhost:8000` with `fast-shore-29582.herokuapp.com`. After that, start up the app by running `npm run dev`! 
+**PLEASE NOTE:** You may have to disable CORS in your browser to post new transactions. Also initial requests may take a while if the API is 'sleeping'.
 
-## Build Setup
-
-```bash
-# install dependencies
-$ yarn install
-
-# serve with hot reload at localhost:3000
-$ yarn dev
-
-# build for production and launch server
-$ yarn build
-$ yarn start
-
-# generate static project
-$ yarn generate
-```
-
-For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
+If you did create a backend, make sure the API is up and running and follow the steps above. However, this time you won't be replacing `http://localhost:8000`. Enjoy
