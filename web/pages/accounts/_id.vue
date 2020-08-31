@@ -174,22 +174,8 @@ export default {
 
       evt.preventDefault();
 
-      axios.post(
-        `http://localhost:8000/api/transaction/new/`,
-        this.payment,
-      ).then(response => {
-        alert(response.data);
-        this.loading = true;
-      }).catch(error => {
-        alert(error);
-      }).finally(() => {
-        that.payment = {};
-        that.show = false;
-        that.loading = false;
-      });
-
-      // update items
-      setTimeout(() => {
+      //Update items on page after post
+      const fetchInfo = () => {
         axios
           .get(`http://localhost:8000/api/account/${this.$route.params.id}`)
           .then(function(response) {
@@ -224,7 +210,22 @@ export default {
 
             that.transactions = transactions;
           });
-      }, 200);
+      };
+
+      //Post data
+      axios.post(
+        `http://localhost:8000/api/transaction/new/`,
+        this.payment,
+      ).then(res => {
+        alert(res.data.message);
+        fetchInfo();
+      }).catch(error => {
+        alert("Something went wrong. Please try again.");
+        console.log(error);
+      }).finally(() => {
+        that.payment = {};
+        that.show = false;
+      });
     }
   }
 };
