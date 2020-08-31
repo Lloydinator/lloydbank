@@ -11,16 +11,6 @@ class AccountsTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('accounts')->insert([
-            'name' => 'John Hubert',
-            'balance' => 15000,
-            'currency_id' => 1,
-        ]);
-
-        DB::table('accounts')->insert([
-            'name' => 'Pyotr Henkel',
-            'balance' => 100000,
-            'currency_id' => 2
-        ]);
+        factory(App\Account::class, 25)->create();
     }
 }

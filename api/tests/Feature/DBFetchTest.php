@@ -15,19 +15,14 @@ class DBFetchTest extends TestCase
      */
 	 
 	use RefreshDatabase;
-	 
-    public function testFetchingAccountsFromDatabase(){
-        $this->getJson('/api/transactions/all')
-			->assertStatus(200);
-    }
-
-	public function testFetchingTxnFromDatabase(){
-		$this->getJson('/api/transactions/all')
-			->assertStatus(200);
-	}
 	
-	public function testFetchingCurrenciesFromDatabase(){
-		$this->getJson('api/currencies')
+    public function testFetchingAccountsFromDatabase(){
+        $this->getJson('/api/accounts')
+			->assertStatus(200);
+    }	
+	
+	public function testFetchingTxnFromDatabase(){
+		$this->getJson('/api/transactions/account/1')
 			->assertStatus(200);
 	}
 }
