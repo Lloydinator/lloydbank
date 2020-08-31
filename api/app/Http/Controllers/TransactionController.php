@@ -16,7 +16,6 @@ class TransactionController extends Controller
 			'to' => 'required',
 			'amount' => 'required',
 			'currency_id' => 'required',
-			'message' => 'required'
 		]);
 		
 		//Set variables for binding
@@ -43,8 +42,8 @@ class TransactionController extends Controller
 				$transaction->message = $message;
 				
 				if ($transaction->save()){
-					//Convert currency from euros to USD to report balance in USD
-					if ($currency_id = 2){
+					//Convert currency from euros to USD only IF user is US
+					if ($currency_id === 2 && $newBalance->currency_id != 2){
 						$amount = $amount / 0.84;
 					}
 					//Store new balance
@@ -78,7 +77,7 @@ class TransactionController extends Controller
 
     public function show($id)
     {
-		$txn = Account::find(1)->transactions()->where('from', $id)->get()->toJson(JSON_PRETTY_PRINT);
+		$txn = Account::find($id)->transactions()->where('from', $id)->get()->toJson(JSON_PRETTY_PRINT);
 		return $txn;
 	}
 	
