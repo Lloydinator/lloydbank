@@ -74,7 +74,7 @@ class TransactionController extends Controller
 
     public function show($id)
     {
-		$txn = Account::find(1)->transactions()->where('from', $id)->get()->toJson(JSON_PRETTY_PRINT);
+		$txn = Account::find($id)->transactions()->where('from', $id)->get()->toJson(JSON_PRETTY_PRINT);
 		return $txn;
 	}
 	

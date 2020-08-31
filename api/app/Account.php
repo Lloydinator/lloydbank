@@ -9,7 +9,7 @@ class Account extends Model
     protected $table = 'accounts';
 	protected $fillable = ['name', 'balance', 'currency_id'];
 	
-	public function transaction(){
+	public function transactions(){
 		return $this->hasMany('App\Transaction', 'from');
 	}
 }
