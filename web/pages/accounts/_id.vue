@@ -124,7 +124,7 @@ export default {
   mounted() {
     const that = this;
     axios
-      .get(`https://fast-shore-29582.herokuapp.com/api/account/${this.$route.params.id}`)
+      .get(`http://localhost:8000/api/account/${this.$route.params.id}`)
       .then(function(response) {
         if (!response.data.length) {
           window.location.href = "/";
@@ -137,7 +137,7 @@ export default {
       });
     axios
       .get(
-        `https://fast-shore-29582.herokuapp.com/api/transactions/account/${
+        `http://localhost:8000/api/transactions/account/${
           this.$route.params.id
         }`
       )
@@ -164,7 +164,7 @@ export default {
       //Update items on page after post
       const fetchInfo = () => {
         axios
-          .get(`https://fast-shore-29582.herokuapp.com/api/account/${this.$route.params.id}`)
+          .get(`http://localhost:8000/api/account/${this.$route.params.id}`)
           .then(function(response) {
             if (!response.data.length) {
               window.location.href = "/";
@@ -174,7 +174,7 @@ export default {
           });
         axios
           .get(
-            `https://fast-shore-29582.herokuapp.com/api/transactions/account/${
+            `http://localhost:8000/api/transactions/account/${
               that.$route.params.id
             }`
           )
@@ -192,7 +192,7 @@ export default {
       };
       //Post data
       axios.post(
-        `https://fast-shore-29582.herokuapp.com/api/transaction/new/`,
+        `http://localhost:8000/api/transaction/new/`,
         this.payment,
       ).then(res => {
         alert(res.data.message);
