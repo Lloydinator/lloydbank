@@ -1,6 +1,6 @@
 # Lloyd Bank
 
-To start working with this app, open your terminal and clone it into the directory of your choosing. Example: `lloyd@lloyd ~ git clone git@github.com:Lloydinator/lloydbank.git`.
+To start working with this app, open your terminal and clone it into the directory of your choosing. Example: `git clone git@github.com:Lloydinator/lloydbank.git`.
 
 After you've don't that, cd into the directory (`cd \home\www\lloydbank`). The folder labeled 'api' is your backend, while the folder labeled 'web' is your frontend. 
 
