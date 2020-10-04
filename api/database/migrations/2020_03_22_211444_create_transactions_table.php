@@ -20,7 +20,8 @@ class CreateTransactionsTable extends Migration
             $table->text('details');
             $table->float('amount');
 			$table->integer('currency_id');
-			$table->string('message', 140)->nullable(true);
+            $table->string('message', 140)->nullable(true);
+            $table->boolean('publictxn')->default(true);
 			$table->timestamps();
         });
     }

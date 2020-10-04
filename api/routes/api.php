@@ -14,12 +14,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('accounts/all', 'AccountController@index');
+Route::prefix('account')->group(function(){
+    Route::get('{id}', 'AccountController@show');
+    Route::post('create', 'AccountController@store');
+    Route::put('{id}', 'AccountController@update');
+    Route::delete('{id}', 'AccountController@delete');
+});
 
-Route::get('accounts', 'AccountController@index');
-Route::get('account/{id}', 'AccountController@show');
-Route::post('account/create', 'AccountController@store');
-Route::put('account/{id}', 'AccountController@update');
-Route::delete('account/{id}', 'AccountController@delete');
-
+Route::prefix('transactions')->group(function(){
+    Route::get('all', 'TransactionController@index');
+    Route::get('account/{id}', 'TransactionController@show');
+});
 Route::post('transaction/new', 'TransactionController@store');
-Route::get('transactions/account/{id}', 'TransactionController@show');

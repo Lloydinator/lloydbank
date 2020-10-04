@@ -8,6 +8,11 @@ use App\Account;
 
 class TransactionController extends Controller
 {
+	public function index(){
+		$txn = Transaction::where('publictxn', 1)->get();
+		return $txn;
+	}
+
 	public function genRandStr($len){
 		$chars = 'abcdefghijklmnopqrstuvwxyz';
 		$charLength = strlen($chars);

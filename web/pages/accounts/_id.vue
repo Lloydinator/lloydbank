@@ -196,7 +196,7 @@ export default {
         this.payment,
       ).then(res => {
         alert(res.data.message);
-        fetchInfo();
+	fetchInfo();
       }).catch(error => {
         alert("Something went wrong. Please try again.");
         console.log(error);
