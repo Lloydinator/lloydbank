@@ -17,7 +17,7 @@ class DBFetchTest extends TestCase
 	use RefreshDatabase;
 	
     public function testFetchingAccountsFromDatabase(){
-        $this->getJson('/api/accounts')
+        $this->getJson('/api/accounts/all')
 			->assertStatus(200);
     }	
 	

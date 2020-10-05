@@ -19,7 +19,6 @@ class CreateTransactionsTable extends Migration
             $table->bigInteger('to')->unsigned()->nullable();
             $table->text('details');
             $table->float('amount');
-			$table->integer('currency_id');
             $table->string('message', 140)->nullable(true);
             $table->boolean('publictxn')->default(true);
 			$table->timestamps();

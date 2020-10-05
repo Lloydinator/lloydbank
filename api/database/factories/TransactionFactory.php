@@ -11,7 +11,6 @@ $factory->define(Transaction::class, function (Faker $faker) {
 		'to' => $faker->numberBetween(16,30),
 		'details' => 'transaction ID: F'.$faker->numberBetween(100,999).$faker->randomLetter(),
 		'amount' => $faker->numberBetween(10,1000),
-		'currency_id' => $faker->numberBetween(1,2),
 		'message' => $faker->text(60),
 		'publictxn' => $faker->boolean()	
     ];
