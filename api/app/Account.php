@@ -7,9 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Account extends Model
 {
     protected $table = 'accounts';
-	protected $fillable = ['name', 'balance', 'currency_id'];
+	protected $fillable = ['name', 'balance', 'userid'];
 	
 	public function transactions(){
 		return $this->hasMany('App\Transaction', 'from');
+	}
+
+	public function users(){
+		return $this->belongsTo('App\User');
 	}
 }

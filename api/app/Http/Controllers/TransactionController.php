@@ -27,7 +27,7 @@ class TransactionController extends Controller
 		if ($request->from == $request->to)
 			return abort(400, "You can't send money to yourself.");
 		if ($amount > $newBalance['balance'] || $newBalance['balance'] <= 0) 
-			return abort(422, "Your balance isn't high enough.");
+			return abort(400, "Your balance isn't high enough.");
 		
 		$transaction->from = $request->from;
 		$transaction->to = $request->to;
