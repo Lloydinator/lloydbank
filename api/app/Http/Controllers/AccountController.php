@@ -21,13 +21,13 @@ class AccountController extends Controller
     public function store(Request $request)
     {
 		$this->validate($request, [
-			'name' => 'required',
-			'balance' => 'required'
+			'balance' => 'required',
 		]);
 		
 		$account = new Account();
 		$account->name = $request->name;
 		$account->balance = $request->balance;
+		$account->userid = $request->userid;
 		
 		if ($account->save()){
 			return response()->json([
@@ -51,27 +51,6 @@ class AccountController extends Controller
 			return response()->json([
 				'message' => 'Not found'
 			], 404);
-		}
-    }
-
-    public function update(Request $request, $id)
-    {
-        $this->validate([
-			'name' => 'required',
-		]);
-		
-		$account = Account::find($id);
-		$account->name = $require->name;
-		
-		if ($account->save()){
-			return response()->json([
-				'message' => 'Your account information has been updated.'
-			]);
-		}
-		else {
-			return response()->json([
-				'message' => 'Something went wrong.'
-			]);
 		}
     }
 }

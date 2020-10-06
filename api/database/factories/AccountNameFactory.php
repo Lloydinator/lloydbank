@@ -7,7 +7,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Account::class, function (Faker $faker) {
     return [
-        'name' => $faker->name,
-		'balance' => mt_rand(20, 1000000)
+        'balance' => mt_rand(20, 100000),
+        'userid' => $faker->unique()->numberBetween(1, 30)
     ];
 });
