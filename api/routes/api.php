@@ -13,16 +13,27 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('accounts/all', 'AccountController@index');
-Route::prefix('account')->group(function(){
+// Authentication
+Route::post('register', RegisterController::class);
+Route::group(['prefix' => 'auth', 'middleware' => 'api'], function(){
+    Route::post('login', 'AuthController@login');
+    Route::post('logout', 'AuthController@logout');
+    Route::post('refresh', 'AuthController@refresh');
+    Route::post('me', 'AuthController@me');
+});
+
+// Account info
+Route::get('accounts/all', 'AccountController@index')->middleware('auth.basic');
+Route::group(['prefix' => 'account', 'middleware' => 'auth.basic'], function(){
     Route::get('{id}', 'AccountController@show');
     Route::post('create', 'AccountController@store');
     Route::put('{id}', 'AccountController@update');
     Route::delete('{id}', 'AccountController@delete');
 });
 
-Route::prefix('transactions')->group(function(){
+// Transactions
+Route::group(['prefix' => 'transactions', 'middleware' => 'auth.basic'], function(){
     Route::get('all', 'TransactionController@index');
     Route::get('account/{id}', 'TransactionController@show');
 });
-Route::post('transaction/new', 'TransactionController@store');
+Route::post('transaction/new', 'TransactionController@store')->middleware('auth.basic');
