@@ -23,17 +23,16 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function(){
 });
 
 // Account info
-Route::get('accounts/all', 'AccountController@index')->middleware('auth.basic');
-Route::group(['prefix' => 'account', 'middleware' => 'auth.basic'], function(){
-    Route::get('{id}', 'AccountController@show');
+Route::group(['prefix' => 'account', 'middleware' => 'jwt.auth'], function(){
+    Route::get('me', 'AccountController@show');
     Route::post('create', 'AccountController@store');
-    Route::put('{id}', 'AccountController@update');
-    Route::delete('{id}', 'AccountController@delete');
+    Route::put('me', 'AccountController@update');
+    Route::delete('me', 'AccountController@delete');
 });
 
 // Transactions
-Route::group(['prefix' => 'transactions', 'middleware' => 'auth.basic'], function(){
+Route::group(['prefix' => 'transactions', 'middleware' => 'jwt.auth'], function(){
     Route::get('all', 'TransactionController@index');
     Route::get('account/{id}', 'TransactionController@show');
 });
-Route::post('transaction/new', 'TransactionController@store')->middleware('auth.basic');
+Route::post('transaction/new', 'TransactionController@store')->middleware('jwt.auth');

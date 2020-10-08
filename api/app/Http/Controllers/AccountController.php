@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Account;
+use App\User;
 
 class AccountController extends Controller
 {
@@ -14,12 +15,16 @@ class AccountController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function index()
-    {
-        $accounts = Account::all()->toJson(JSON_PRETTY_PRINT);
-		return response($accounts, 200);
-    }
-
+	/*
+	public function __construct(){
+		dd(Auth::user());
+		if (is_null(Auth::user())){
+			return response()->json([
+				'message' => 'Unauthorized'
+			], 400);
+		}
+	}
+	*/
     public function store(Request $request)
     {
 		$this->validate($request, [
@@ -43,10 +48,12 @@ class AccountController extends Controller
 		}
     }
 
-    public function show($id)
+    public function show()
     {
-        if (Account::where('id', $id)->exists()){
-			$account = Account::where('id', $id)->get()->toJson(JSON_PRETTY_PRINT);
+		
+		$id = Auth::user()->id;
+        if (User::where('id', $id)->exists()){
+			$account = User::with('accounts')->where('id', $id)->get()->toJson(JSON_PRETTY_PRINT);
 			return response($account, 200);
 		}
 		else {
