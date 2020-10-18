@@ -18,6 +18,8 @@ class RegisterController extends Controller
         $validated['password'] = bcrypt($request->password);
 
         $user = new User;
+        $count = User::count();
+        $account = User::find($count+1);
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = $validated['password'];

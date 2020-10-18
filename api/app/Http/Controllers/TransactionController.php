@@ -25,9 +25,9 @@ class TransactionController extends Controller
 		$newBalanceTo = Account::find($request->to);
 
 		if ($request->from == $request->to)
-			return abort(400, "You can't send money to yourself.");
+			return response()->json(["message" => "You can't send money to yourself."], 400);
 		if ($amount > $newBalance['balance'] || $newBalance['balance'] <= 0) 
-			return abort(400, "Your balance isn't high enough.");
+			return response()->json(["message" => "Your balance isn't high enough."], 400);
 		
 		$transaction->from = $request->from;
 		$transaction->to = $request->to;

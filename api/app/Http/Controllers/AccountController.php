@@ -14,17 +14,6 @@ class AccountController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-
-	/*
-	public function __construct(){
-		dd(Auth::user());
-		if (is_null(Auth::user())){
-			return response()->json([
-				'message' => 'Unauthorized'
-			], 400);
-		}
-	}
-	*/
     public function store(Request $request)
     {
 		$this->validate($request, [
@@ -32,11 +21,13 @@ class AccountController extends Controller
 		]);
 		
 		$account = new Account();
+		$user = new User();
 		$account->name = $request->name;
 		$account->balance = $request->balance;
 		$account->userid = $request->userid;
 		
 		if ($account->save()){
+			$user->createAsStripeCustomer();
 			return response()->json([
 				'message' => 'New account information saved.'
 			]);
@@ -61,5 +52,9 @@ class AccountController extends Controller
 				'message' => 'Not found'
 			], 404);
 		}
-    }
+	}
+
+	public function addCard(){
+		
+	}
 }

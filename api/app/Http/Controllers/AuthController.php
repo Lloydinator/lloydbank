@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use JWTAuth;
+use JWTFactory;
 
 class AuthController extends Controller
 {
@@ -27,7 +29,7 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        if (!$token = Auth::attempt($credentials)){
+        if (!$token = JWTAuth::attempt($credentials)){
             return response()->json(['error' => 'Unauthorized']);
         }
 
@@ -40,7 +42,7 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function me(){
-        return response()->json(Auth::user());
+        return response()->json(JWTAuth::user());
     }
 
     /**
@@ -50,7 +52,7 @@ class AuthController extends Controller
      */
     public function logout(){
         Auth::logout();
-        return response()->json(['message' => 'Successfully logged in']);
+        return response()->json(['message' => 'Successfully logged out']);
     }
 
     /**
@@ -59,7 +61,7 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function refresh(){
-        return $this->respondWithToken(Auth::refresh());
+        return $this->respondWithToken(JWTAuth::refresh());
     }
 
     /**
@@ -73,7 +75,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => Auth::factory()->getTTL() * 5
+            'expires_in' => JWTFactory::getTTL() * 5
         ]);
     }
 }
