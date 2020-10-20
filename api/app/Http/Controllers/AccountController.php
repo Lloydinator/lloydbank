@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Account;
 use App\User;
+use Stripe\StripeClient;
 
 class AccountController extends Controller
 {
@@ -21,13 +22,16 @@ class AccountController extends Controller
 		]);
 		
 		$account = new Account();
-		$user = new User();
-		$account->name = $request->name;
 		$account->balance = $request->balance;
 		$account->userid = $request->userid;
 		
 		if ($account->save()){
-			$user->createAsStripeCustomer();
+			$apiKey = env('STRIPE_SECRET');
+			$customer = new StripeClient($apiKey);
+			$customer->customers->create([
+				'description' => 'This customer has $'.$request->balance, 
+				'email' => User::find($request->userid)->email,
+			]);
 			return response()->json([
 				'message' => 'New account information saved.'
 			]);
