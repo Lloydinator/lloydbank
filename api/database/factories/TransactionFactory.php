@@ -7,8 +7,8 @@ use Faker\Generator as Faker;
 
 $factory->define(Transaction::class, function (Faker $faker) {
     return [
-		'from' =>  $faker->numberBetween(1,15),
-		'to' => $faker->numberBetween(16,30),
+		'from' =>  $faker->numberBetween(1,5),
+		'to' => $faker->numberBetween(6,10),
 		'details' => 'transaction ID: F'.$faker->numberBetween(100,999).$faker->randomLetter(),
 		'amount' => $faker->numberBetween(10,1000),
 		'message' => $faker->text(60),

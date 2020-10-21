@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Account;
 use App\User;
 use Stripe\StripeClient;
+use Stripe\SetupIntent;
+use Stripe\Stripe;
 
 class AccountController extends Controller
 {
@@ -17,9 +19,6 @@ class AccountController extends Controller
      */
     public function store(Request $request)
     {
-		$this->validate($request, [
-			'balance' => 'required',
-		]);
 		
 		$account = new Account();
 		$account->balance = $request->balance;
@@ -27,13 +26,20 @@ class AccountController extends Controller
 		
 		if ($account->save()){
 			$apiKey = env('STRIPE_SECRET');
+			Stripe::setApiKey($apiKey);
 			$customer = new StripeClient($apiKey);
-			$customer->customers->create([
+			$thisCustomer = $customer->customers->create([
 				'description' => 'This customer has $'.$request->balance, 
 				'email' => User::find($request->userid)->email,
 			]);
+
+			$intent = SetupIntent::create([
+				'customer' => $thisCustomer->id,
+			]);
+
 			return response()->json([
-				'message' => 'New account information saved.'
+				'message' => 'New account information saved.', 
+				'intent' => $intent->client_secret,
 			]);
 		}
 		else {
@@ -45,7 +51,6 @@ class AccountController extends Controller
 
     public function show()
     {
-		
 		$id = Auth::user()->id;
         if (User::where('id', $id)->exists()){
 			$account = User::with('accounts')->where('id', $id)->get()->toJson(JSON_PRETTY_PRINT);
