@@ -30,12 +30,12 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    //{url: 'https://js.stripe.com/v3/', mode: 'client'},
   ],
   /*
   ** Nuxt.js dev-modules
   */
   buildModules: [
-    '@nuxt/typescript-build',
   ],
   /*
   ** Nuxt.js modules
@@ -45,6 +45,7 @@ export default {
     'bootstrap-vue/nuxt',
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
+    '@nuxtjs/auth',
     '@nuxtjs/pwa',
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
@@ -59,6 +60,21 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
+    baseUrl: 'http://localhost:8000/api'
+  },
+  /**
+   *  Auth module configuration
+   */
+  auth: {
+    strategies: {
+      local: {
+        endpoints: {
+          login: {url: 'auth/login', method: 'post', propertyName: 'data.token'},
+          user: {url: 'account/me', method: 'get', propertyName: 'data'},
+          logout: false,
+        }
+      }
+    }
   },
   /*
   ** Build configuration
