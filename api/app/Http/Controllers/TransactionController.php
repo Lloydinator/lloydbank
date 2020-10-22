@@ -17,18 +17,26 @@ class TransactionController extends Controller
     {
 		$request->validated();
 
+		// Set variables
 		$transaction = new Transaction;
-		$randomString = strtoupper(genRandStr(2));
+		$randomString = strtoupper(generateRandomString(2));
 		$randomNum = mt_rand(10,99);
-		$amount = $request->amount;
 		$newBalance = Account::find($request->from);
 		$newBalanceTo = Account::find($request->to);
 
-		if ($request->from == $request->to)
-			return response()->json(["message" => "You can't send money to yourself."], 400);
-		if ($amount > $newBalance['balance'] || $newBalance['balance'] <= 0) 
-			return response()->json(["message" => "Your balance isn't high enough."], 400);
+		// Checking to see if card should be used, and double-check to make sure 
+		$amount = swipeThatCard($newBalance, $request->amount);
+
+		if (!balanceCheck($newBalance, $amount, $request->from, $request->to)){
+			abort(422, [
+				'message' => "Something was wrong with your request. Make sure you're
+								not sending money to yourself or sending more 
+								than you have"
+				]
+			);	
+		}	
 		
+		// Binding
 		$transaction->from = $request->from;
 		$transaction->to = $request->to;
 		$transaction->details = "transaction ID: F".$randomNum.$randomString;
@@ -36,6 +44,7 @@ class TransactionController extends Controller
 		$transaction->message = $request->message;
 		$transaction->publictxn = $request->publictxn;
 		
+		// Database
 		if ($transaction->save()){
 			$newBalance->balance = $newBalance['balance'] - $amount;
 			$newBalanceTo->balance = $newBalanceTo['balance'] + $amount;
@@ -47,7 +56,7 @@ class TransactionController extends Controller
 			], 201);
 		}
 		else {
-			return abort(400, "Something went wrong, You should try again.");
+			abort(400, "Something went wrong. You should try again.");
 		}
 	}
 
