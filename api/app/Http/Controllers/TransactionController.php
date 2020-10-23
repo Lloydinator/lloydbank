@@ -24,10 +24,11 @@ class TransactionController extends Controller
 		$newBalance = Account::find($request->from);
 		$newBalanceTo = Account::find($request->to);
 
-		// Checking to see if card should be used, and double-check to make sure 
-		$amount = swipeThatCard($newBalance, $request->amount);
-
-		if (!balanceCheck($newBalance, $amount, $request->from, $request->to)){
+		// Checking to see if card was swiped and assign value to $amount based on that
+		$amount = swipeThatCard($newBalance->balance, $request->amount, $request->customer) ? 
+					$newBalance->balance : $request->amount;
+		/*
+		if (!balanceCheck($newBalance, $request->amount, $request->from, $request->to)){
 			abort(422, [
 				'message' => "Something was wrong with your request. Make sure you're
 								not sending money to yourself or sending more 
@@ -35,7 +36,7 @@ class TransactionController extends Controller
 				]
 			);	
 		}	
-		
+		*/
 		// Binding
 		$transaction->from = $request->from;
 		$transaction->to = $request->to;

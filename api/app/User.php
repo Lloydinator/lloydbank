@@ -60,4 +60,8 @@ class User extends Authenticatable implements JWTSubject
     public function accounts(){
         return $this->hasOne('App\Account', 'userid');
     }
+
+    public function stripecustomer(){
+		return $this->hasOne('App\StripeCustomer', 'user_id');
+	}
 }

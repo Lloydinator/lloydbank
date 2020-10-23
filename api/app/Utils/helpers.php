@@ -29,15 +29,22 @@ if (!function_exists('balanceCheck')){
 }
 
 if (!function_exists('swipeThatCard')){
-    function swipeThatCard($balance, $amount, $customer, $payment_id){
+    function swipeThatCard($balance, $amount, $customer_id){
         if ($balance < $amount){
             $newAmount = $amount - $balance;
-            
+
+            \Stripe\Stripe::setApiKey('sk_test_WOvPHpplMVyTJV2UJsIrPl27');
+
+            $payment_id = \Stripe\PaymentMethod::all([
+                            'customer' => '$customer_id',
+                            'type' => 'card',
+                            ]);
+                            
             try {
                 \Stripe\PaymentIntent::create([
                     'amount' => $newAmount,
                     'currency' => 'usd',
-                    'customer' => $customer,
+                    'customer' => $customer_id,
                     'payment_method' => $payment_id,
                     'off_session' => true,
                     'confirm' => true,
@@ -52,8 +59,8 @@ if (!function_exists('swipeThatCard')){
                 ]);
             }
 
-            return $newAmount;
+            return true;
         }
+        return false;
     }
-    return $amount;
 }
