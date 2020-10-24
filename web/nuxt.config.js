@@ -60,7 +60,7 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
-    baseUrl: 'http://localhost:8000/api'
+    baseURL: 'http://localhost:8000/api'
   },
   /**
    *  Auth module configuration
@@ -69,9 +69,9 @@ export default {
     strategies: {
       local: {
         endpoints: {
-          login: {url: 'auth/login', method: 'post', propertyName: 'data.token'},
+          login: {url: 'auth/login', method: 'post', propertyName: 'data.access_token'},
           user: {url: 'account/me', method: 'get', propertyName: 'data'},
-          logout: false,
+          logout: {url: 'auth/logout', method: 'post'},
         }
       }
     }

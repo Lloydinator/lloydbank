@@ -28,7 +28,8 @@ class TransactionController extends Controller
 		$amount = swipeThatCard($newBalance->balance, $request->amount, $request->customer) ? 
 					$newBalance->balance : $request->amount;
 		/*
-		if (!balanceCheck($newBalance, $request->amount, $request->from, $request->to)){
+		// Final checks
+		if (!balanceCheck($newBalance->balance, $amount, $request->from, $request->to)){
 			abort(422, [
 				'message' => "Something was wrong with your request. Make sure you're
 								not sending money to yourself or sending more 
@@ -37,6 +38,7 @@ class TransactionController extends Controller
 			);	
 		}	
 		*/
+		
 		// Binding
 		$transaction->from = $request->from;
 		$transaction->to = $request->to;

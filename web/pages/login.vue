@@ -3,19 +3,19 @@
         <div class="container max-w-sm mx-auto flex-1 flex flex-col items-center justify-center px-2">
             <div class="bg-white px-6 py-8 rounded shadow-md text-black w-full">
                 <h1 class="mb-8 text-3xl text-center">Log in</h1>
-                <Notification :message="error" v-if="error" />
+                <Message :message="error" v-if="error" />
                 <form method="post" @submit="onSubmit">
                     <input 
                         type="text"
                         class="block border border-grey-light w-full p-3 rounded mb-4"
                         name="email"
-                        v-model="email"
+                        v-model="auth.email"
                         placeholder="Email" />
                     <input 
                         type="password"
                         class="block border border-grey-light w-full p-3 rounded mb-4"
                         name="password"
-                        v-model="password"
+                        v-model="auth.password"
                         placeholder="Password" />
                     <div class="flex justify-center">
                         <button 
@@ -39,7 +39,7 @@
 
 <script>
 import Vue from "vue"
-import axios from "axios"
+import Message from '~/components/Message'
 
 export default Vue.extend({
   data() {
@@ -49,19 +49,19 @@ export default Vue.extend({
       success: false
     };
   },
-  components: {},
+  components: {
+    Message,
+  },
   methods: {
-    onSubmit(evt){
+    async onSubmit(evt){
       evt.preventDefault()
-      console.log(this.auth)
-      axios.post(
-        `http://localhost:8000/api/auth/login`,
-        this.auth
-      ).then(res => {
-        console.log(res.data)
-      }).catch(error => {
-        console.log(error)
-      })
+      try {
+        console.log(this.auth)
+        await this.$auth.loginWith('local', this.auth)
+      }
+      catch (e){
+        this.error = e.response.data.message
+      }
     }
   }
 });
