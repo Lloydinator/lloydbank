@@ -16,18 +16,16 @@ use Illuminate\Support\Facades\Route;
 // Authentication
 Route::post('register', RegisterController::class);
 Route::group(['prefix' => 'auth', 'middleware' => 'api'], function(){
-    Route::post('login', 'AuthController@login');
+    Route::post('login', 'AuthController@login')->middleware('log.route');
     Route::post('logout', 'AuthController@logout');
     Route::post('refresh', 'AuthController@refresh');
-    Route::post('me', 'AuthController@me');
+    Route::post('me', 'AuthController@me')->middleware('log.route');
 });
 
 // Account info
 Route::group(['prefix' => 'account', 'middleware' => 'jwt.auth'], function(){
     Route::get('me', 'AccountController@show');
     Route::post('create', 'AccountController@store');
-    Route::put('me', 'AccountController@update');
-    Route::delete('me', 'AccountController@delete');
 });
 
 // Transactions

@@ -61,7 +61,10 @@ export default {
   */
   axios: {
     baseURL: 'http://localhost:8000/api'
-  },
+  },/*
+  router: {
+    middleware: ['auth']
+  },*/
   /**
    *  Auth module configuration
    */
@@ -69,8 +72,8 @@ export default {
     strategies: {
       local: {
         endpoints: {
-          login: {url: 'auth/login', method: 'post', propertyName: 'data.access_token'},
-          user: {url: 'account/me', method: 'get', propertyName: 'data'},
+          login: {url: 'auth/login', method: 'post', propertyName: 'access_token'},
+          user: {url: 'auth/me', method: 'post', propertyName: 'id'},
           logout: {url: 'auth/logout', method: 'post'},
         }
       }
@@ -94,3 +97,5 @@ export default {
     }
   }
 }
+
+

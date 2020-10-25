@@ -9,13 +9,13 @@
                         type="text"
                         class="block border border-grey-light w-full p-3 rounded mb-4"
                         name="email"
-                        v-model="auth.email"
+                        v-model="entrance.email"
                         placeholder="Email" />
                     <input 
                         type="password"
                         class="block border border-grey-light w-full p-3 rounded mb-4"
                         name="password"
-                        v-model="auth.password"
+                        v-model="entrance.password"
                         placeholder="Password" />
                     <div class="flex justify-center">
                         <button 
@@ -44,7 +44,7 @@ import Message from '~/components/Message'
 export default Vue.extend({
   data() {
     return {
-      auth: {},
+      entrance: {},
       error: null, 
       success: false
     };
@@ -56,8 +56,12 @@ export default Vue.extend({
     async onSubmit(evt){
       evt.preventDefault()
       try {
-        console.log(this.auth)
-        await this.$auth.loginWith('local', this.auth)
+        let response = await this.$auth.loginWith(
+          'local', 
+          {data: this.entrance}
+        )
+        console.log(this.$auth.loggedIn)
+        this.$router.push('/')
       }
       catch (e){
         this.error = e.response.data.message

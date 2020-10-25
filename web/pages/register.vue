@@ -4,7 +4,7 @@
         <div class="container max-w-sm mx-auto flex-1 flex flex-col items-center justify-center px-2">
             <div class="bg-white px-6 py-8 rounded shadow-md text-black w-full">
                 <h1 class="mb-8 text-3xl text-center">Sign up</h1>
-                <Notification :message="error" v-if="error" />
+                <Message :message="error" v-if="error" />
                 <form method="post" @submit.prevent="register">
                     <input 
                         type="text"
@@ -45,43 +45,30 @@
 </template>
 
 <script>
-import Message from '~/components/Message'
-
-export default {
-  components: {
-    Message,
-  },
-
+import Vue from "vue"
+import axios from "axios"
+export default Vue.extend({
   data() {
     return {
-      name: '',
-      email: '',
-      password: '',
-      error: null
-    }
+      entrance: {},
+      error: null, 
+      success: false
+    };
   },
-
+  components: {},
   methods: {
-    async register() {
-      try {
-        await this.$axios.post('register', {
-          name: this.name,
-          email: this.email,
-          password: this.password
-        })
-        /*
-        await this.$auth.loginWith('local', {
-          data: {
-          email: this.email,
-          password: this.password
-          },
-        })
-        */
-        this.$router.push('/')
-      } catch (e) {
-        this.error = e.response.data.message
-      }
+    onSubmit(evt){
+      evt.preventDefault()
+      console.log(this.entrance)
+      axios.post(
+        `http://localhost:8000/api/auth/login`,
+        this.entrance
+      ).then(res => {
+        console.log(res.data)
+      }).catch(error => {
+        console.log(error)
+      })
     }
   }
-}
+});
 </script>

@@ -21,10 +21,6 @@
               <a class="navbar-item pr-5 text-lg text-white">Logout</a>
             </div>
           </div>
-          <template v-else>
-            <nuxt-link class="navbar-item pr-5 text-lg text-white" to="/register">Register</nuxt-link>
-            <nuxt-link class="navbar-item pr-5 text-lg text-white" to="/login">Log In</nuxt-link>
-          </template>
         </div>
       </div>
     </div>

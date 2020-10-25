@@ -112,6 +112,7 @@ import Vue from "vue"
 import axios from "axios"
 
 export default {
+  middleware: 'auth',
   data() {
     return {
       //Before page load
@@ -123,38 +124,31 @@ export default {
     };
   },
   mounted() {
-    const that = this;
     axios
-      .get(`http://localhost:8000/api/account/${this.$route.params.id}`)
+      .get('http://localhost:8000/api/auth/me')
       .then(function(response) {
+        console.log(response)
         if (!response.data.length) {
-          window.location.href = "/";
+          window.location.href = "/login";
         } else {
-          that.account = response.data[0];
-          if (that.account) {
-            that.loading = false;
+          this.account = response.data[0];
+          if (this.account) {
+            this.loading = false;
           }
         }
       });
     axios
-      .get(
-        `http://localhost:8000/api/transactions/account/${
-          this.$route.params.id
-        }`
-      )
+      .get(`http://localhost:8000/api/transactions/all`)
       .then(function(response) {
-        that["transactions"] = response.data;
+        this["transactions"] = response.data;
         
         var transactions = [];
         for (let i = 0; i < that.transactions.length; i++) {
-          that.transactions[i].amount =
-            (that.transactions[i].currency_id === 1 ? "$" : "€") +
-            that.transactions[i].amount;
-          transactions.push(that.transactions[i]);
+          transactions.push(that.transactions['$'+i]);
         }
-        that.transactions = transactions;
-        if (that.account) {
-          that.loading = false;
+        this.transactions = transactions;
+        if (this.account) {
+          this.loading = false;
         }
       });
   },

@@ -28,9 +28,9 @@ class AuthController extends Controller
             'email' => 'email|required',
             'password' => 'required'
         ]);
-
+            
         if (!$token = JWTAuth::attempt($credentials)){
-            return response()->json(['error' => 'Unauthorized']);
+            return response()->json(['error' => 'Wrong user/password combination']);
         }
 
         return $this->respondWithToken($token);
