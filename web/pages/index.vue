@@ -1,106 +1,50 @@
 <template>
   <div>
-    <div class="container" v-if="loading">loading...</div>
-
-    <div class="container" v-if="!loading">
-      <b-card :header="'Welcome, ' + account.name" class="mt-3">
-        <b-card-text>
-          <div>
-            Account: <code>{{account.id}}</code>
-          </div>
-          <div>
-            Balance:
-            <code
-              >{{ account.currency === "1" ? "$" : "€"
-              }}{{ account.balance }}</code
+    <div class="flex justify-center mt-8">
+      <ul class="flex border-b">
+        <li class="mr-1">
+          <a 
+            class="bg-white inline-block border-l border-t border-r rounded-t py-2 px-4 text-blue-700 font-semibold"
+            @click.prevent="setActive('global')"
+            :class="{active: isActive('global')}"
+            href="#global"
             >
-          </div>
-        </b-card-text>
-        <b-button size="sm" variant="success" @click="show = !show"
-          >New payment</b-button
-        >
-
-        <b-button
-          class="float-right"
-          variant="danger"
-          size="sm"
-          nuxt-link
-          to="/"
-          >Logout</b-button
-        >
-      </b-card>
-
-      <b-card class="mt-3" header="New Payment" v-show="show">
-        <b-form @submit="onSubmit">
-          <input 
-            type="hidden"
-            :value="payment.from=account.id"
-          >
-          <input 
-            type="hidden"
-            :value="payment.currency_id=account.currency_id"
-          >
-          <b-form-group id="input-group-1" label="To:" label-for="input-1">
-            <b-form-input
-              id="input-1"
-              size="sm"
-              v-model.number="payment.to"
-              type="number"
-              required
-              placeholder="Destination ID"
-            ></b-form-input>
-          </b-form-group>
-
-          <b-form-group id="input-group-2" label="Amount:" label-for="input-2">
-            <b-input-group prepend="$" size="sm">
-              <b-form-input
-                id="input-2"
-                v-model.number="payment.amount"
-                type="number"
-                required
-                placeholder="Amount"
-              ></b-form-input>
-            </b-input-group>
-          </b-form-group>
-
-          <b-form-group id="input-group-3" label="Message (optional):" label-for="input-3">
-            <b-form-input
-              id="input-3"
-              size="sm"
-              v-model="payment.message"
-              placeholder="Your message (no more than 140 characters)"
-            ></b-form-input>
-          </b-form-group>
-
-          <b-button 
-            type="submit" 
-            size="sm" 
-            variant="primary"
-            >Submit</b-button>
-        </b-form>
-      </b-card>
-
-      <div class="flex justify-center mb-8">
-        <div class="inline-block border bg-white rounded mx-auto mt-20">
-          <div class="py-2 pb-4 w-full">
-            <h1 class="font-sans text-center text-2xl">Payment History</h1>
-          </div>
-          <div class="flex justify-center items-center align-center px-2">
-            <table class="shadow-lg bg-white w-full mb-4">
-              <tr>
-                <th class="bg-gray-500 border px-8 py-2">A/C To</th>
-                <th class="bg-gray-500 border px-8 py-2">Amount</th>
-                <th class="bg-gray-500 border px-8 py-2">Details</th>
-                <th class="bg-gray-500 border px-8 py-2">Message</th>
-              </tr>
-              <tr :key="transaction.id" v-for="transaction in transactions">
-                <td class="border px-8 py-2">{{transaction.to}}</td>
-                <td class="border px-8 py-2">{{transaction.amount}}</td>
-                <td class="border px-8 py-2">{{transaction.details}}</td>
-                <td class="border px-8 py-2">{{transaction.message}}</td>
-              </tr>
-            </table>
-          </div>
+            Global
+          </a>
+        </li>
+        <li class="mr-1">
+          <a 
+            class="bg-white inline-block py-2 px-4 text-blue-500 hover:text-blue-800 font-semibold"
+            @click.prevent="setActive('personal')"
+            :class="{active: isActive('personal')}"
+            href="#personal"
+            >
+            Personal
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="flex justify-center">
+      <div 
+        class="inline-block border bg-white rounded mx-auto"
+        :class="{'active show': isActive('personal')}"
+        id="personal"
+      >
+        <div class="flex justify-center items-center align-center px-2 mt-4">
+          <table class="shadow-lg bg-white w-full mb-4">
+            <tr>
+              <th class="bg-gray-500 border px-8 py-2">A/C To</th>
+              <th class="bg-gray-500 border px-8 py-2">Amount</th>
+              <th class="bg-gray-500 border px-8 py-2">Details</th>
+              <th class="bg-gray-500 border px-16 py-2">Message</th>
+            </tr>
+            <tr :key="transaction.id" v-for="transaction in transactions">
+              <td class="border px-8 py-2">{{transaction.to}}</td>
+              <td class="border px-8 py-2">{{transaction.amount}}</td>
+              <td class="border px-8 py-2">{{transaction.details}}</td>
+              <td class="border px-16 py-2">{{transaction.message}}</td>
+            </tr>
+          </table>
         </div>
       </div>
     </div>
@@ -116,30 +60,17 @@ export default {
   data() {
     return {
       //Before page load
-      show: false,
+      activeItem: 'global',
       payment: {},
       account: null,
       transactions: null,
-      loading: true,
     };
   },
   mounted() {
     axios
-      .get('http://localhost:8000/api/auth/me')
+      .get('http://localhost:8000/api/transactions/all')
       .then(function(response) {
-        console.log(response)
-        if (!response.data.length) {
-          window.location.href = "/login";
-        } else {
-          this.account = response.data[0];
-          if (this.account) {
-            this.loading = false;
-          }
-        }
-      });
-    axios
-      .get(`http://localhost:8000/api/transactions/all`)
-      .then(function(response) {
+        console.log(response.data)
         this["transactions"] = response.data;
         
         var transactions = [];
@@ -153,52 +84,11 @@ export default {
       });
   },
   methods: {
-    onSubmit(evt) {
-      var that = this;
-      evt.preventDefault();
-      //Update items on page after post
-      const fetchInfo = () => {
-        axios
-          .get(`http://localhost:8000/api/account/${this.$route.params.id}`)
-          .then(function(response) {
-            if (!response.data.length) {
-              window.location.href = "/";
-            } else {
-              that.account = response.data[0];
-            }
-          });
-        axios
-          .get(
-            `http://localhost:8000/api/transactions/account/${
-              that.$route.params.id
-            }`
-          )
-          .then(function(response) {
-            that["transactions"] = response.data;
-            var transactions = [];
-            for (let i = 0; i < that.transactions.length; i++) {
-              that.transactions[i].amount =
-                (that.transactions[i].currency === 1 ? "$" : "€") +
-                that.transactions[i].amount;
-              transactions.push(that.transactions[i]);
-            }
-            that.transactions = transactions;
-          });
-      };
-      //Post data
-      axios.post(
-        `http://localhost:8000/api/transaction/new/`,
-        this.payment,
-      ).then(res => {
-        alert(res.data.message);
-	      fetchInfo();
-      }).then(() => {
-        that.payment = {};
-        that.show = false;
-      }).catch(error => {
-        alert("Something went wrong. Please try again.");
-        console.log(error);
-      });
+    isActive(menuItem){
+      return this.activeItem === menuItem
+    },
+    setActive(menuItem){
+      this.activeItem = menuItem
     }
   }
 };

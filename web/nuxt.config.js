@@ -19,7 +19,7 @@ export default {
   /*
   ** Customize the progress-bar color
   */
-  loading: { color: '#fff' },
+  loading: { color: '#ffda29', height: '5px' },
   /*
   ** Global CSS
   */
@@ -36,7 +36,14 @@ export default {
   ** Nuxt.js dev-modules
   */
   buildModules: [
+    '@nuxtjs/fontawesome',
   ],
+
+  fontawesome: {
+    icons: {
+      solid: ['faBars']
+    }
+  },
   /*
   ** Nuxt.js modules
   */
@@ -69,6 +76,9 @@ export default {
    *  Auth module configuration
    */
   auth: {
+    redirect: {
+      logout: '/login'
+    },
     strategies: {
       local: {
         endpoints: {
