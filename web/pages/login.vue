@@ -47,7 +47,7 @@ export default Vue.extend({
       entrance: {},
       error: null, 
       success: false
-    };
+    }
   },
   components: {
     Message,
@@ -60,7 +60,6 @@ export default Vue.extend({
           'local', 
           {data: this.entrance}
         )
-        console.log(this.$auth.loggedIn)
         this.$router.push('/')
       }
       catch (e){

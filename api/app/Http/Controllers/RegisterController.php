@@ -23,7 +23,9 @@ class RegisterController extends Controller
         $user->password = $validated['password'];
 
         if ($user->save()){
-            return app(AuthController::class)->login($request);
+            return response()->json([
+                'message' => 'User is registered.'
+            ], 201);
         }
         else {
             return response()->json([

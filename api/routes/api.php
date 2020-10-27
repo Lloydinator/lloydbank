@@ -17,9 +17,10 @@ use Illuminate\Support\Facades\Route;
 Route::post('register', RegisterController::class);
 Route::group(['prefix' => 'auth', 'middleware' => 'api'], function(){
     Route::post('login', 'AuthController@login')->middleware('log.route');
+    Route::post('refresh', 'AuthController@refresh');
     Route::post('logout', 'AuthController@logout');
     Route::post('refresh', 'AuthController@refresh');
-    Route::post('me', 'AuthController@me')->middleware('log.route');
+    Route::get('me', 'AuthController@me');
 });
 
 // Account info

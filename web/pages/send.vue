@@ -35,6 +35,7 @@
 </template>
 <script>
 export default {
+    middleware: 'auth',
     name: 'send-money',
     data(){
         return {

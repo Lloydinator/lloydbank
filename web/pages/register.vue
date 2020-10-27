@@ -5,24 +5,24 @@
             <div class="bg-white px-6 py-8 rounded shadow-md text-black w-full">
                 <h1 class="mb-8 text-3xl text-center">Sign up</h1>
                 <Message :message="error" v-if="error" />
-                <form method="post" @submit.prevent="register">
+                <form method="post" @submit="onSubmit">
                     <input 
                         type="text"
                         class="block border border-grey-light w-full p-3 rounded mb-4"
                         name="name"
-                        v-model="name"
+                        v-model="entrance.name"
                         placeholder="Full Name" />
                     <input 
                         type="text"
                         class="block border border-grey-light w-full p-3 rounded mb-4"
                         name="email"
-                        v-model="email"
+                        v-model="entrance.email"
                         placeholder="Email" />
                     <input 
                         type="password"
                         class="block border border-grey-light w-full p-3 rounded mb-4"
                         name="password"
-                        v-model="password"
+                        v-model="entrance.password"
                         placeholder="Password" />
                     <div class="flex justify-center">
                         <button 
@@ -46,28 +46,35 @@
 
 <script>
 import Vue from "vue"
-import axios from "axios"
+import Message from "~/components/Message"
+
 export default Vue.extend({
   data() {
     return {
       entrance: {},
       error: null, 
       success: false
-    };
+    }
   },
-  components: {},
+  components: {
+    Message,
+  },
   methods: {
-    onSubmit(evt){
+    async onSubmit(evt){
       evt.preventDefault()
-      console.log(this.entrance)
-      axios.post(
-        `http://localhost:8000/api/auth/login`,
-        this.entrance
-      ).then(res => {
-        console.log(res.data)
-      }).catch(error => {
-        console.log(error)
-      })
+      try {
+        await this.$axios.post('register', this.entrance)
+        await this.$auth.loginWith('local', {
+          data: {
+            email: this.entrance.email,
+            password: this.entrance.password
+          },
+        })
+        this.$router.push('/')
+      }
+      catch (e){
+        this.error = e.response.data.message
+      }
     }
   }
 });

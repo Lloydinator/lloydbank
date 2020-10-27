@@ -77,16 +77,23 @@ export default {
    */
   auth: {
     redirect: {
-      logout: '/login'
+      logout: '/login',
+      callback: '/login'
     },
     strategies: {
       local: {
         endpoints: {
           login: {url: 'auth/login', method: 'post', propertyName: 'access_token'},
-          user: {url: 'auth/me', method: 'post', propertyName: 'id'},
+          user: {url: 'auth/me', method: 'get', propertyName: false},
           logout: {url: 'auth/logout', method: 'post'},
+        },
+        token: {
+          maxAge: 5 * 60
+        },
+        refreshToken: {
+          maxAge: 20160 * 60
         }
-      }
+      },
     }
   },
   /*

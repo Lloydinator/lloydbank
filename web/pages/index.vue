@@ -70,10 +70,9 @@ export default {
     axios
       .get('http://localhost:8000/api/transactions/all')
       .then(function(response) {
-        console.log(response.data)
         this["transactions"] = response.data;
         
-        var transactions = [];
+        var transactions = []
         for (let i = 0; i < that.transactions.length; i++) {
           transactions.push(that.transactions['$'+i]);
         }
@@ -81,7 +80,7 @@ export default {
         if (this.account) {
           this.loading = false;
         }
-      });
+      })
   },
   methods: {
     isActive(menuItem){
