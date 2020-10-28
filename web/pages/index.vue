@@ -89,15 +89,13 @@ export default {
       account: null,
       transactions: [],
       mytransactions: [],
-      tok: '',
     };
   },
   mounted() {
-    this.tok = this.$auth.getToken('local')
     axios
       .get('http://localhost:8000/api/transactions/all', {
         headers: {
-          'Authorization': this.tok
+          'Authorization': this.$auth.getToken('local')
         }
       })
       .then(res => {
@@ -109,7 +107,7 @@ export default {
     axios
       .get(`http://localhost:8000/api/transactions/account/${this.$auth.$state.user.id}`, {
         headers: {
-          'Authorization': this.tok
+          'Authorization': this.$auth.getToken('local')
         }
       })
       .then(res => {

@@ -98,7 +98,7 @@ export default {
     }
   },
   stripe: {
-    publishableKey: process.env.STRIPE_KEY
+    publishableKey: process.env.PUB_KEY
   },
   /*
   ** Build configuration

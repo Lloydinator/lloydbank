@@ -22,7 +22,7 @@
             <div class="leading-loose">
                 <div class="max-w-xl m-4 p-10 bg-white rounded shadow-xl">
                     <form class="mb-8">
-                        <p class="text-gray-800 font-medium">Customer information</p>
+                        <p class="text-gray-800 font-medium border-b border-black mb-4">Customer information</p>
                         <div class="mt-2">
                         <label class=" block text-sm text-gray-600" for="cus_email">Address</label>
                         <input 
@@ -56,7 +56,7 @@
                         <button type="submit" @click="onSubmit">Add Address</button>
                     </form>
                     <!-- card -->
-                    <p class="mt-4 text-gray-800 border-b border-black font-medium">Payment information</p>
+                    <p class="mt-4 mb-4 text-gray-800 border-b border-black font-medium">Payment information</p>
                     <div ref="card"></div>
                     <button 
                         type="submit" 
@@ -77,7 +77,8 @@ export default {
     data(){
         return {
             userData: {},
-            error: null
+            error: null,
+            intent: '',
         };
     },
     computed: {
@@ -87,30 +88,47 @@ export default {
         const elements = this.$stripe.import().elements()
         const card = elements.create('card', {})
         card.mount(this.$refs.card)
-    },
+
+        this.getIntent()
+    },   
     methods: {
-        async onSubmit(e){
-            e.preventDefault()
-            let data = new FormData;
-            data.append('userid', this.$auth.$state.user.id)
-            data.append('street', this.userData.street)
-            data.append('city', this.userData.city)
-            data.append('zip', this.userData.zip)
-            console.log(this.userData)
-            try {
-                let response = await axios.post(
-                    'http://localhost:8000/api/account/create', this.data,
+        async getIntent(){
+            try{
+                let response = await this.$axios.get(
+                    `account/setup-intent/${this.$auth.$state.user.id}`,
                     {
                         header: {
                             'Authorization': this.$auth.getToken('local')
                         }
                     }
                 )
-                console.log(response)
+                //this.intent = response.data.intent 
+                //console.this.intent
             }
             catch(e){
                 this.error = e.response.data.message
-                console.log(this.error)
+            }
+        },
+        async onSubmit(e){
+            e.preventDefault()
+            const data = new FormData()
+            data.append('userid', this.$auth.$state.user.id)
+            data.append('street', this.userData.street)
+            data.append('city', this.userData.city)
+            data.append('zip', this.userData.zip)
+
+            try {
+                let response = await this.$axios.post(
+                    'account/create', data,
+                    {
+                        header: {
+                            'Authorization': this.$auth.getToken('local')
+                        }
+                    }
+                )
+            }
+            catch(e){
+                this.error = e.response.data.message
             }
         }
     }

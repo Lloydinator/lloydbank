@@ -26,8 +26,8 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function(){
 // Account info
 Route::group(['prefix' => 'account', 'middleware' => 'jwt.auth'], function(){
     Route::get('me', 'AccountController@show');
-    Route::get('setup-intent', 'AccountController@setupIntent');
-    Route::post('create', 'AccountController@store');
+    Route::get('setup-intent/{id}', 'AccountController@setupIntent');
+    Route::post('create', 'AccountController@store')->middleware('log.route');
 });
 
 // Transactions
