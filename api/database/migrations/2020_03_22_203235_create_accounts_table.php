@@ -17,6 +17,9 @@ class CreateAccountsTable extends Migration
             $table->id();
             $table->float('balance')->default(0);
             $table->integer('userid')->nullable()->unique();
+            $table->string('street')->nullable();
+            $table->string('city')->nullable();
+            $table->string('zip')->nullable();
 			$table->timestamps();
         });
     }

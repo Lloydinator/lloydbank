@@ -13,18 +13,21 @@ use Stripe\Stripe;
 
 class AccountController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+	protected $thisAccount;
+	
+	public function __construct()
+	{
+		$this->thisAccount = new StripeCustomer();
+	}
+
     public function store(Request $request)
     {
 		
 		$account = new Account();
-		$thisAccount = new StripeCustomer();
-		$account->balance = $request->balance;
 		$account->userid = $request->userid;
+		$account->street = $request->street;
+		$account->city = $request->city;
+		$account->zip = $request->zip;
 		
 		if ($account->save()){
 			$apiKey = env('STRIPE_SECRET');
@@ -40,23 +43,26 @@ class AccountController extends Controller
 			$thisAccount->customer_id = $thisCustomer->id;
 			$thisAccount->user_id = $request->userid;
 			$thisAccount->save();
-			
-			// Create setup intent
-			$intent = SetupIntent::create([
-				'customer' => $thisCustomer->id,
-			]);
-
-			return response()->json([
-				'message' => 'New account information saved.', 
-				'intent' => $intent->client_secret,
-			]);
 		}
 		else {
 			return response()->json([
 				'message' => 'Something went wrong.'
 			]);
 		}
-    }
+	}
+	
+	public function setupIntent()
+	{
+		// Create setup intent
+		$intent = SetupIntent::create([
+			'customer' => $this->thisAccount->customer_id,
+		]);
+
+		return response()->json([
+			'message' => 'New account information saved.', 
+			'intent' => $intent->client_secret,
+		]);
+	}
 
     public function show()
     {

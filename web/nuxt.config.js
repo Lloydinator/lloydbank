@@ -57,6 +57,7 @@ export default {
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
     'nuxt-purgecss',
+    'nuxt-stripe-module',
   ],
   purgeCSS: {
     mode: 'postcss',
@@ -95,6 +96,9 @@ export default {
         }
       },
     }
+  },
+  stripe: {
+    publishableKey: process.env.STRIPE_KEY
   },
   /*
   ** Build configuration

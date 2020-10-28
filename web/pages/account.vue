@@ -18,32 +18,53 @@
                 </div>
                 </div>
             </section>
-            <form class="mt-6 pt-4">
-                <div class="personal w-full border-t border-gray-400 pt-4">
-                    <h2 class="text-2xl text-gray-900">Personal info:</h2>
-                    <div class="flex items-center justify-between mt-4">
-                        <div class='w-full md:w-1/2 px-3 mb-6'>
-                            <label class='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2' >first name</label>
-                            <input class='appearance-none block w-full bg-white text-gray-700 border border-gray-400 shadow-inner rounded-md py-3 px-4 leading-tight focus:outline-none  focus:border-gray-500' type='text'  required>
+            <!-- component -->
+            <div class="leading-loose">
+                <div class="max-w-xl m-4 p-10 bg-white rounded shadow-xl">
+                    <form class="mb-8">
+                        <p class="text-gray-800 font-medium">Customer information</p>
+                        <div class="mt-2">
+                        <label class=" block text-sm text-gray-600" for="cus_email">Address</label>
+                        <input 
+                            class="w-full px-2 py-2 text-gray-700 bg-gray-200 rounded" 
+                            name="street" 
+                            type="text" 
+                            placeholder="Street" 
+                            v-model="userData.street"
+                        >
                         </div>
-                        <div class='w-full md:w-1/2 px-3 mb-6'>
-                            <label class='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2' >last name</label>
-                            <input class='appearance-none block w-full bg-white text-gray-700 border border-gray-400 shadow-inner rounded-md py-3 px-4 leading-tight focus:outline-none  focus:border-gray-500' type='text'  required>
+                        <div class="mt-2">
+                        <label class="hidden text-sm block text-gray-600" for="cus_email">City</label>
+                        <input 
+                            class="w-full px-2 py-2 text-gray-700 bg-gray-200 rounded" 
+                            name="city" 
+                            type="text" 
+                            placeholder="City" 
+                            v-model="userData.city"
+                        >
                         </div>
-                    </div>
-                    <div class='w-full md:w-full px-3 mb-6'>
-                        <label class='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'>user name</label>
-                        <input class='appearance-none block w-full bg-white text-gray-700 border border-gray-400 shadow-inner rounded-md py-3 px-4 leading-tight focus:outline-none  focus:border-gray-500' type='text'  required>
-                    </div>
-                    <div class='w-full md:w-full px-3 mb-6'>
-                        <label class='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2' >Bio</label>
-                        <textarea class='bg-gray-100 rounded-md border leading-normal resize-none w-full h-20 py-2 px-3 shadow-inner border border-gray-400 font-medium placeholder-gray-700 focus:outline-none focus:bg-white'  required></textarea>
-                    </div>
-                    <div class="flex justify-end">
-                        <button class="appearance-none bg-gray-200 text-gray-900 px-2 py-1 shadow-sm border border-gray-400 rounded-md mr-3" type="submit">save changes</button>
-                    </div>
+                        <div class="inline-block mt-2 -mx-1 pl-1 w-1/2">
+                        <label class="hidden block text-sm text-gray-600" for="cus_email">Zip</label>
+                        <input 
+                            class="w-full px-2 py-2 text-gray-700 bg-gray-200 rounded" 
+                            name="zip" 
+                            type="text" 
+                            placeholder="Zip" 
+                            v-model="userData.zip"
+                        >
+                        </div>
+                        <button type="submit" @click="onSubmit">Add Address</button>
+                    </form>
+                    <!-- card -->
+                    <p class="mt-4 text-gray-800 border-b border-black font-medium">Payment information</p>
+                    <div ref="card"></div>
+                    <button 
+                        type="submit" 
+                        id="card-button"
+                        >Add Card
+                    </button>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
@@ -55,15 +76,43 @@ export default {
     name: 'account',
     data(){
         return {
-
+            userData: {},
+            error: null
         };
     },
     computed: {
         ...mapGetters(['loggedInUser'])
     },
     mounted(){
-
+        const elements = this.$stripe.import().elements()
+        const card = elements.create('card', {})
+        card.mount(this.$refs.card)
     },
-
+    methods: {
+        async onSubmit(e){
+            e.preventDefault()
+            let data = new FormData;
+            data.append('userid', this.$auth.$state.user.id)
+            data.append('street', this.userData.street)
+            data.append('city', this.userData.city)
+            data.append('zip', this.userData.zip)
+            console.log(this.userData)
+            try {
+                let response = await axios.post(
+                    'http://localhost:8000/api/account/create', this.data,
+                    {
+                        header: {
+                            'Authorization': this.$auth.getToken('local')
+                        }
+                    }
+                )
+                console.log(response)
+            }
+            catch(e){
+                this.error = e.response.data.message
+                console.log(this.error)
+            }
+        }
+    }
 }
 </script>
