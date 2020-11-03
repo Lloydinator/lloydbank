@@ -21,6 +21,8 @@
             <!-- component -->
             <div class="leading-loose">
                 <div class="max-w-xl m-4 p-10 bg-white rounded shadow-xl">
+                    <Message :message="error" v-if="error" />
+                    <Message :message="success" v-if="success" />
                     <form class="mb-8">
                         <p class="text-gray-800 font-medium border-b border-black mb-4">Customer information</p>
                         <div class="mt-2">
@@ -61,6 +63,7 @@
                     <button 
                         type="submit" 
                         id="card-button"
+                        @click="paymentIntent"
                         >Add Card
                     </button>
                 </div>
@@ -71,6 +74,8 @@
 </template>
 <script>
 import {mapGetters} from 'vuex'
+import Message from '~/components/Message'
+
 export default {
     middleware: 'auth',
     name: 'account',
@@ -78,36 +83,69 @@ export default {
         return {
             userData: {},
             error: null,
+            success: null,
             intent: '',
+            clientSecret: '',
+            elements: null,
+            card: null,
         };
+    },
+    components: {
+        Message,
     },
     computed: {
         ...mapGetters(['loggedInUser'])
     },
     mounted(){
-        const elements = this.$stripe.import().elements()
-        const card = elements.create('card', {})
-        card.mount(this.$refs.card)
+        this.elements = this.$stripe.import().elements()
+        console.log(this.elements)
+        this.card = this.elements.create('card', {})
+        this.card.mount(this.$refs.card)
 
         this.getIntent()
     },   
     methods: {
-        async getIntent(){
-            try{
-                let response = await this.$axios.get(
-                    `account/setup-intent/${this.$auth.$state.user.id}`,
-                    {
-                        header: {
-                            'Authorization': this.$auth.getToken('local')
-                        }
+        paymentIntent(evt){
+            evt.preventDefault()
+            
+            self = this
+            self.$stripe.import().confirmCardSetup(
+                this.intent,
+                {
+                    payment_method: {
+                        card: self.elements,
+                        billing_details: {
+                            name: self.$auth.$state.user.name,
+                        },
+                    },
+                }
+            )
+            .then(
+                res => {
+                    if (res.error){
+                        console.log(res.error)
                     }
-                )
-                //this.intent = response.data.intent 
-                //console.this.intent
-            }
-            catch(e){
-                this.error = e.response.data.message
-            }
+                    else {
+                        console.log(res)
+                    }
+                }
+            )
+        },
+        async getIntent(){
+            self = this
+            self.$axios.get(`account/setup-intent/${self.$auth.$state.user.id}`,
+                {
+                    header: {
+                        'Authorization': self.$auth.getToken('local')
+                    }
+                }
+            )
+            .then(
+                res => {
+                    self.intent = res.data.intent
+                }
+            )
+            .catch(error => console.log(error))
         },
         async onSubmit(e){
             e.preventDefault()
@@ -126,6 +164,7 @@ export default {
                         }
                     }
                 )
+                this.message = response.data.message
             }
             catch(e){
                 this.error = e.response.data.message

@@ -55,18 +55,18 @@ class AccountController extends Controller
 	public function setupIntent(Request $request)
 	{
 		// Create setup intent
-		if (Account::where('userid', $request->id)){
+		if (Account::where('userid', $request->id)->exists()){
 			$intent = SetupIntent::create([
 				'customer' => User::find($request->id)->stripecustomer->customer_id,
 			]);
 			return response()->json([
-				'message' => 'New account information saved.', 
+				'message' => 'Setting up your card.', 
 				'intent' => $intent->client_secret,
 			]);
 		}
 		else {
 			return response()->json([
-				'message' => 'No intent created yet.', 
+				'message' => 'No account found to create an intent.', 
 			], 200);
 		}
 	}
