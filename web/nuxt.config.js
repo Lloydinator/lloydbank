@@ -14,6 +14,9 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+    ],
+    script: [
+      {src: 'https://js.stripe.com/v3/'}
     ]
   },
   /*
@@ -57,7 +60,6 @@ export default {
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
     'nuxt-purgecss',
-    'nuxt-stripe-module',
   ],
   purgeCSS: {
     mode: 'postcss',
@@ -96,9 +98,6 @@ export default {
         }
       },
     }
-  },
-  stripe: {
-    publishableKey: process.env.PUB_KEY
   },
   /*
   ** Build configuration

@@ -59,11 +59,11 @@
                     </form>
                     <!-- card -->
                     <p class="mt-4 mb-4 text-gray-800 border-b border-black font-medium">Payment information</p>
-                    <div ref="card"></div>
+                    <div ref="cardelement"></div>
                     <button 
                         type="submit" 
                         id="card-button"
-                        @click="paymentIntent"
+                        @click="setupIntent"
                         >Add Card
                     </button>
                 </div>
@@ -84,10 +84,9 @@ export default {
             userData: {},
             error: null,
             success: null,
-            intent: '',
             clientSecret: '',
-            elements: null,
             card: null,
+            stripe: Stripe(process.env.PUB_KEY),
         };
     },
     components: {
@@ -96,26 +95,22 @@ export default {
     computed: {
         ...mapGetters(['loggedInUser'])
     },
+    
     mounted(){
-        this.elements = this.$stripe.import().elements()
-        console.log(this.elements)
-        this.card = this.elements.create('card', {})
-        this.card.mount(this.$refs.card)
-
+        var elements = this.stripe.elements()
+        this.card = elements.create('card')
+        this.card.mount(this.$refs.cardelement)
         this.getIntent()
-    },   
+    },
     methods: {
-        paymentIntent(evt){
-            evt.preventDefault()
-            
-            self = this
-            self.$stripe.import().confirmCardSetup(
-                this.intent,
+        setupIntent(){
+            this.stripe.confirmCardSetup(
+                this.clientSecret,
                 {
                     payment_method: {
-                        card: self.elements,
+                        card: this.card,
                         billing_details: {
-                            name: self.$auth.$state.user.name,
+                            name: this.$auth.$state.user.name,
                         },
                     },
                 }
@@ -142,7 +137,7 @@ export default {
             )
             .then(
                 res => {
-                    self.intent = res.data.intent
+                    self.clientSecret = res.data.intent
                 }
             )
             .catch(error => console.log(error))
