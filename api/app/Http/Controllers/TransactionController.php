@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\TxnStoreRequest;
+use Illuminate\Http\Request;
+//use App\Http\Requests\TxnStoreRequest;
 use App\Transaction;
 use App\Account;
+use App\User;
 
 class TransactionController extends Controller
 {
@@ -13,23 +15,26 @@ class TransactionController extends Controller
 		return $txn;
 	}
 	
-    public function store(TxnStoreRequest $request)
+    public function store(Request $request)
     {
-		$request->validated();
+		//$request->validated();
+
+		// Get User ID from Email Address
+		$to = User::firstWhere('email', $request->email);
 
 		// Set variables
 		$transaction = new Transaction;
 		$randomString = strtoupper(generateRandomString(2));
 		$randomNum = mt_rand(10,99);
-		$newBalance = Account::find($request->from);
-		$newBalanceTo = Account::find($request->to);
+		$newBalance = Account::firstWhere('userid', $request->from);
+		$newBalanceTo = Account::firstWhere('userid', $to->id);
 
 		// Checking to see if card was swiped and assign value to $amount based on that
 		$amount = swipeThatCard($newBalance->balance, $request->amount, $request->customer) ? 
 					$newBalance->balance : $request->amount;
 		/*
 		// Final checks
-		if (!balanceCheck($newBalance->balance, $amount, $request->from, $request->to)){
+		if (!balanceCheck($newBalance->balance, $amount, $request->from, $to->id)){
 			abort(422, [
 				'message' => "Something was wrong with your request. Make sure you're
 								not sending money to yourself or sending more 
@@ -41,7 +46,7 @@ class TransactionController extends Controller
 		
 		// Binding
 		$transaction->from = $request->from;
-		$transaction->to = $request->to;
+		$transaction->to = $to->id;
 		$transaction->details = "transaction ID: F".$randomNum.$randomString;
 		$transaction->amount = $amount;
 		$transaction->message = $request->message;
@@ -55,7 +60,7 @@ class TransactionController extends Controller
 			$newBalanceTo->save();
 			
 			return response()->json([
-				'message' => 'You just sent $'.$amount.'. Balance: $'.$newBalance->balance
+				'message' => 'You just sent $'.$request->amount.'. Balance: $'.$newBalance->balance
 			], 201);
 		}
 		else {

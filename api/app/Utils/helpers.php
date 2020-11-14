@@ -35,17 +35,16 @@ if (!function_exists('swipeThatCard')){
 
             \Stripe\Stripe::setApiKey('sk_test_WOvPHpplMVyTJV2UJsIrPl27');
 
-            $payment_id = \Stripe\PaymentMethod::all([
-                            'customer' => '$customer_id',
+            $card = \Stripe\PaymentMethod::all([
+                            'customer' => $customer_id,
                             'type' => 'card',
                             ]);
-                            
             try {
                 \Stripe\PaymentIntent::create([
-                    'amount' => $newAmount,
+                    'amount' => $newAmount * 100,
                     'currency' => 'usd',
                     'customer' => $customer_id,
-                    'payment_method' => $payment_id,
+                    'payment_method' => $card->data[0]->id,
                     'off_session' => true,
                     'confirm' => true,
                 ]);
