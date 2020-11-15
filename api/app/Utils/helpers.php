@@ -16,11 +16,8 @@ if (!function_exists('generateRandomString')){
     }
 }
 
-if (!function_exists('balanceCheck')){
-    function balanceCheck($customerBalance, $amount, $from, $to){
-        if ($customerBalance < $amount){
-            return false;
-        }
+if (!function_exists('finalCheck')){
+    function finalCheck($from, $to){
         if ($from == $to){
             return false;
         }

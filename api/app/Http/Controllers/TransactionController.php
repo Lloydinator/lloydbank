@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 //use App\Http\Requests\TxnStoreRequest;
 use App\Transaction;
-use App\Account;
 use App\User;
 
 class TransactionController extends Controller
@@ -20,47 +19,58 @@ class TransactionController extends Controller
 		//$request->validated();
 
 		// Get User ID from Email Address
-		$to = User::firstWhere('email', $request->email);
+		$toCustomer = User::with('accounts')
+							->where('email', $request->email)
+							->get();
+
+		// Get Customer ID from User ID
+		$fromCustomer = User::with(['accounts', 'stripecustomer'])
+								->where('id', $request->from)
+								->get();
 
 		// Set variables
 		$transaction = new Transaction;
 		$randomString = strtoupper(generateRandomString(2));
 		$randomNum = mt_rand(10,99);
-		$newBalance = Account::firstWhere('userid', $request->from);
-		$newBalanceTo = Account::firstWhere('userid', $to->id);
 
-		// Checking to see if card was swiped and assign value to $amount based on that
-		$amount = swipeThatCard($newBalance->balance, $request->amount, $request->customer) ? 
-					$newBalance->balance : $request->amount;
-		/*
-		// Final checks
-		if (!balanceCheck($newBalance->balance, $amount, $request->from, $to->id)){
+		// Final check
+		if (!finalCheck($request->from, $toCustomer[0]->id)){
 			abort(422, [
-				'message' => "Something was wrong with your request. Make sure you're
-								not sending money to yourself or sending more 
-								than you have"
+				'message' => "Something was wrong with your request. Make sure 
+								you're not sending money to yourself."
 				]
 			);	
 		}	
-		*/
-		
+
+		// Checking to see if card was swiped and assign value to $amount based on that
+		$amount = swipeThatCard($fromCustomer[0]->accounts->balance, 
+								$request->amount, 
+								$fromCustomer[0]->stripecustomer->customer_id) ? 
+								$fromCustomer[0]->accounts->balance : 
+								$request->amount;
+
 		// Binding
-		$transaction->from = $request->from;
-		$transaction->to = $to->id;
+		$transaction->from = $fromCustomer[0]->accounts->id;
+		$transaction->to = $toCustomer[0]->id;
 		$transaction->details = "transaction ID: F".$randomNum.$randomString;
-		$transaction->amount = $amount;
+		$transaction->amount = $request->amount;
 		$transaction->message = $request->message;
 		$transaction->publictxn = $request->publictxn;
 		
 		// Database
 		if ($transaction->save()){
-			$newBalance->balance = $newBalance['balance'] - $amount;
-			$newBalanceTo->balance = $newBalanceTo['balance'] + $amount;
-			$newBalance->save();
-			$newBalanceTo->save();
+			$fromUser = User::find($request->from);
+			$toUser = User::find($toCustomer[0]->id);
+
+			$fromUser->accounts->balance = $fromCustomer[0]->accounts->balance - $amount;
+			$toUser->accounts->balance = $toCustomer[0]->accounts->balance + $request->amount;
+			
+			$fromUser->push();
+			$toUser->push();
 			
 			return response()->json([
-				'message' => 'You just sent $'.$request->amount.'. Balance: $'.$newBalance->balance
+				'sent' => $request->amount,
+				'balance' => '$'.$fromUser->accounts->balance
 			], 201);
 		}
 		else {
@@ -70,9 +80,9 @@ class TransactionController extends Controller
 
     public function show($id)
     {
-		$txn = Account::find($id);
+		$txn = User::find($id);
 		if (isset($txn)){
-			return $txn->transactions()->where('from', $id)->get()->toJson(JSON_PRETTY_PRINT);
+			return $txn->accounts->transactions;
 		}
 	}
 }
