@@ -15,6 +15,10 @@
                     <strong>Email:</strong>
                     {{ loggedInUser.email }}
                     </p>
+                    <p>
+                    <strong>Balance:</strong>
+                    ${{ balance }}
+                    </p>
                 </div>
                 </div>
             </section>
@@ -25,6 +29,17 @@
                     <Message :message="success" v-if="success" />
                     <form class="mb-8">
                         <p class="text-gray-800 font-medium border-b border-black mb-4">Customer information</p>
+                        <div class="mt-2">
+                        <label class="block text-sm text-gray-600" for="cus_email">Phone Number</label>
+                        <input 
+                            class="w-full px-2 py-2 text-gray-700 bg-gray-200 rounded" 
+                            name="phone" 
+                            type="tel" 
+                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                            placeholder="Phone Number (Format: 123-456-7890)" 
+                            v-model="userData.phone"
+                        >
+                        </div>
                         <div class="mt-2">
                         <label class=" block text-sm text-gray-600" for="cus_email">Address</label>
                         <input 
@@ -81,6 +96,7 @@ export default {
     name: 'account',
     data(){
         return {
+            balance: 0,
             userData: {},
             error: null,
             success: null,
@@ -97,6 +113,17 @@ export default {
     },
     
     mounted(){
+        this.$axios.get('account/me',
+            {
+                header: {
+                    'Authorization': this.$auth.getToken('local')
+                }
+            }
+        ).then(
+            res => {
+                this.balance = res.data[0].accounts.balance
+            }
+        )
         var elements = this.stripe.elements()
         this.card = elements.create('card')
         this.card.mount(this.$refs.cardelement)
@@ -146,6 +173,7 @@ export default {
             e.preventDefault()
             const data = new FormData()
             data.append('userid', this.$auth.$state.user.id)
+            data.append('phone', this.userData.phone)
             data.append('street', this.userData.street)
             data.append('city', this.userData.city)
             data.append('zip', this.userData.zip)

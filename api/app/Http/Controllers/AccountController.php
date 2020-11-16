@@ -24,6 +24,7 @@ class AccountController extends Controller
     {
 		$account = new Account();
 		$account->userid = $request->userid;
+		$account->phone = $request->phone;
 		$account->street = $request->street;
 		$account->city = $request->city;
 		$account->zip = $request->zip;

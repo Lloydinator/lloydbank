@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 //use App\Http\Requests\TxnStoreRequest;
+use App\Traits\NotificationTrait;
 use App\Transaction;
 use App\User;
 
 class TransactionController extends Controller
 {
+	use NotificationTrait;
+
 	public function index(){
 		$txn = Transaction::where('publictxn', 1)->get();
 		return $txn;
@@ -57,7 +60,7 @@ class TransactionController extends Controller
 		$transaction->message = $request->message;
 		$transaction->publictxn = $request->publictxn;
 		
-		// Database
+		// Update Records and Send Notifications
 		if ($transaction->save()){
 			$fromUser = User::find($request->from);
 			$toUser = User::find($toCustomer[0]->id);
@@ -67,7 +70,17 @@ class TransactionController extends Controller
 			
 			$fromUser->push();
 			$toUser->push();
+
+			$text = "Hey ".$toCustomer[0]->name.", ".$fromCustomer[0]->name;
+			$text .= " just sent you $".$request->amount.". Check "; 
+			$text .= "the LloydBank website for more info.";
 			
+			$this->textMessage(
+				env('TWILIO_PHONE'),
+				$toCustomer[0]->accounts->phone,
+				$text
+			);
+
 			return response()->json([
 				'sent' => '$'.$request->amount,
 				'balance' => '$'.$fromUser->accounts->balance
