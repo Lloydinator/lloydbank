@@ -69,7 +69,7 @@ class TransactionController extends Controller
 			$toUser->push();
 			
 			return response()->json([
-				'sent' => $request->amount,
+				'sent' => '$'.$request->amount,
 				'balance' => '$'.$fromUser->accounts->balance
 			], 201);
 		}
