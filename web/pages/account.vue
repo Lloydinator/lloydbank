@@ -102,7 +102,7 @@ export default {
             success: null,
             clientSecret: '',
             card: null,
-            stripe: Stripe(process.env.PUB_KEY),
+            stripe: {},
         };
     },
     components: {
@@ -113,6 +113,8 @@ export default {
     },
     
     mounted(){
+        this.stripe = Stripe(process.env.PUB_KEY)
+        console.log(this.stripe)
         this.$axios.get('account/me',
             {
                 header: {
@@ -148,6 +150,7 @@ export default {
                         console.log(res.error)
                     }
                     else {
+                        this.card.clear()
                         console.log(res)
                     }
                 }
@@ -188,10 +191,18 @@ export default {
                     }
                 )
                 this.message = response.data.message
+                window.location.reload(true)
+                this.clearFields()
             }
             catch(e){
                 this.error = e.response.data.message
             }
+        }, 
+        clearFields(){
+            this.userData.phone = ""
+            this.userData.street = ""
+            this.userData.city = ""
+            this.userData.zip = ""
         }
     }
 }
