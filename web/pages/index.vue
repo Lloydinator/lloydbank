@@ -92,8 +92,8 @@ export default {
     };
   },
   mounted() {
-    axios
-      .get('http://localhost:8000/api/transactions/all', {
+    this.$axios
+      .get('transactions/all', {
         headers: {
           'Authorization': this.$auth.getToken('local')
         }
@@ -104,8 +104,8 @@ export default {
         }
       )
       .catch(e => console.log(e.message))
-    axios
-      .get(`http://localhost:8000/api/transactions/account/${this.$auth.$state.user.id}`, {
+    this.$axios
+      .get(`transactions/account/${this.$auth.$state.user.id}`, {
         headers: {
           'Authorization': this.$auth.getToken('local')
         }

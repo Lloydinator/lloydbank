@@ -114,7 +114,7 @@ export default {
     
     mounted(){
         this.stripe = Stripe(process.env.PUB_KEY)
-        console.log(this.stripe)
+        //console.log(this.stripe)
         this.$axios.get('account/me',
             {
                 header: {
