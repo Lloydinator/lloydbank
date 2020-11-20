@@ -101,7 +101,7 @@
                             >Add Card
                         </button>
                     </div>
-                    <p>
+                    <p v-else>
                         <strong class="uppercase text-blue-800">{{cardbrand}}</strong>
                         *********{{cardnumber}}
                     </p>
@@ -188,11 +188,11 @@ export default {
             .then(
                 res => {
                     if (res.error){
-                        console.log(res.error)
+                        this.error = "Something went wrong"
                     }
                     else {
                         this.card.clear()
-                        console.log(res)
+                        window.location.reload(true)
                     }
                 }
             )

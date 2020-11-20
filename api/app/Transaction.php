@@ -11,7 +11,7 @@ class Transaction extends Model
 	protected $fillable = ['from', 'to', 'details', 'amount', 'message', 'publictxn'];
 	
 	public function accounts(){
-		return $this->belongsTo('App\Account');
+		return $this->belongsToMany('App\Account');
 	}
 }
 

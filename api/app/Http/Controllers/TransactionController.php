@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 //use App\Http\Requests\TxnStoreRequest;
 use App\Traits\NotificationTrait;
+use App\Traits\StripeHelpersTrait;
 use App\Transaction;
 use App\User;
 
 class TransactionController extends Controller
 {
 	use NotificationTrait;
+	use StripeHelpersTrait;
 
 	public function index(){
 		$txn = Transaction::where('publictxn', 1)->get();
@@ -46,7 +48,7 @@ class TransactionController extends Controller
 		}	
 
 		// Checking to see if card was swiped and assign value to $amount based on that
-		$amount = swipeThatCard($fromCustomer[0]->accounts->balance, 
+		$amount = $this->swipeThatCard($fromCustomer[0]->accounts->balance, 
 								$request->amount, 
 								$fromCustomer[0]->stripecustomer->customer_id) ? 
 								$fromCustomer[0]->accounts->balance : 
