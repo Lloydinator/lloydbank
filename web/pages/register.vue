@@ -53,7 +53,6 @@ export default Vue.extend({
     return {
       entrance: {},
       error: null, 
-      success: false
     }
   },
   components: {
@@ -73,7 +72,9 @@ export default Vue.extend({
         this.$router.push('/')
       }
       catch (e){
-        this.error = e.response.data.message
+        const wrongLogin = "Something's not right"
+        const wrong = "You may already have an account"
+        this.error = e.response.status == 500 ? wrong : wrongLogin
       }
     }
   }

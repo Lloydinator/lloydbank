@@ -25,10 +25,28 @@
             <!-- component -->
             <div class="leading-loose">
                 <div class="max-w-xl m-4 p-10 bg-white rounded shadow-xl">
+                    <p class="text-gray-800 font-medium border-b border-black mb-4">Customer information</p>
                     <Message :message="error" v-if="error" />
                     <Message :message="success" v-if="success" />
-                    <form class="mb-8">
-                        <p class="text-gray-800 font-medium border-b border-black mb-4">Customer information</p>
+                    <div v-if="account">
+                        <p class="mb-1">
+                            <strong>Phone Number: </strong>
+                            {{account.phone}}
+                        </p>
+                        <p class="mb-1">
+                            <strong>Street: </strong>
+                            {{account.street}}
+                        </p>
+                        <p class="mb-1">
+                            <strong>City: </strong>
+                            {{account.city}}
+                        </p>
+                        <p class="mb-1">
+                            <strong>Zip: </strong>
+                            {{account.zip}}
+                        </p>
+                    </div>
+                    <form class="mb-8" v-else>
                         <div class="mt-2">
                         <label class="block text-sm text-gray-600" for="cus_email">Phone Number</label>
                         <input 
@@ -74,13 +92,19 @@
                     </form>
                     <!-- card -->
                     <p class="mt-4 mb-4 text-gray-800 border-b border-black font-medium">Payment information</p>
-                    <div ref="cardelement"></div>
-                    <button 
-                        type="submit" 
-                        id="card-button"
-                        @click="setupIntent"
-                        >Add Card
-                    </button>
+                    <div v-if="!cardnumber">
+                        <div ref="cardelement"></div>
+                        <button 
+                            type="submit" 
+                            id="card-button"
+                            @click="setupIntent"
+                            >Add Card
+                        </button>
+                    </div>
+                    <p>
+                        <strong class="uppercase text-blue-800">{{cardbrand}}</strong>
+                        *********{{cardnumber}}
+                    </p>
                 </div>
             </div>
         </div>
@@ -97,11 +121,14 @@ export default {
     data(){
         return {
             balance: 0,
+            account: null,
             userData: {},
             error: null,
             success: null,
             clientSecret: '',
             card: null,
+            cardnumber: null,
+            cardbrand: null,
             stripe: {},
         };
     },
@@ -114,6 +141,20 @@ export default {
     
     mounted(){
         this.stripe = Stripe(process.env.PUB_KEY)
+        
+        this.$axios.get('account/card',
+            {
+                header: {
+                    'Authorization': this.$auth.getToken('local')
+                }
+            }
+        )
+        .then(res => 
+        {
+            this.cardnumber = res.data.card.last4
+            this.cardbrand = res.data.card.brand
+        })
+
         this.$axios.get('account/me',
             {
                 header: {
@@ -122,6 +163,7 @@ export default {
             }
         ).then(
             res => {
+                this.account = res.data[0].accounts
                 this.balance = res.data[0].accounts.balance
             }
         )
@@ -169,7 +211,7 @@ export default {
                     self.clientSecret = res.data.intent
                 }
             )
-            .catch(error => console.log(error))
+            .catch(e => console.log(e))
         },
         async onSubmit(e){
             e.preventDefault()
@@ -194,7 +236,7 @@ export default {
                 this.clearFields()
             }
             catch(e){
-                this.error = e.response.data.message
+                this.error = "Something went wrong"
             }
         }, 
         clearFields(){

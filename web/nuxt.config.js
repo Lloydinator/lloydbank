@@ -70,7 +70,8 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
-    baseURL: 'https://arcane-sierra-89532.herokuapp.com/api'
+    baseURL: 'http://localhost:8000/api'
+    //baseURL: 'https://arcane-sierra-89532.herokuapp.com/api'
   },/*
   router: {
     middleware: ['auth']

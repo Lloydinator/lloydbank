@@ -86,7 +86,16 @@ class AccountController extends Controller
 		}
 	}
 
-	public function addCard(){
-		
+	public function getCard(){
+		$id = Auth::user()->id;
+		$customer = User::with('stripecustomer')->where('id', $id)->get();
+
+		$card = \Stripe\PaymentMethod::all([
+				'customer' => $customer[0]->stripecustomer->customer_id,
+				'type' => 'card',
+			]
+		);
+
+		return $card->data[0];
 	}
 }

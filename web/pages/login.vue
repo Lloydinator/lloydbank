@@ -45,8 +45,7 @@ export default Vue.extend({
   data() {
     return {
       entrance: {},
-      error: null, 
-      success: false
+      error: null
     }
   },
   components: {
@@ -63,7 +62,11 @@ export default Vue.extend({
         this.$router.push('/')
       }
       catch (e){
-        this.error = e.response.data.message
+        const wrongLogin = "Wrong email/password combo"
+        const wrong = "Something went wrong on our end"
+        if (e.response.status == 401) this.error = wrongLogin
+        else if (e.response.status == 500) this.error = wrong
+        else this.error = "Something went wrong"
       }
     }
   }
