@@ -10,7 +10,7 @@ class Account extends Model
 	protected $fillable = ['balance', 'userid'];
 	
 	public function transactions(){
-		return $this->belongsToMany('App\Transaction', 'account_transaction', 'account_id', 'transaction_id');
+		return $this->hasMany('App\Transaction', 'from');
 	}
 
 	public function users(){

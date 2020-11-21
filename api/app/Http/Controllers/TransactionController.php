@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Traits\NotificationTrait;
 use App\Traits\StripeHelpersTrait;
 use App\Transaction;
+use App\TxnParticipant;
 use App\User;
 
 class TransactionController extends Controller
@@ -32,9 +33,10 @@ class TransactionController extends Controller
 		$fromCustomer = User::with(['accounts', 'stripecustomer'])
 								->where('id', $request->from)
 								->get();
-
+		
 		// Set variables
 		$transaction = new Transaction;
+		$txnparticipants = new TxnParticipant;
 		$randomString = strtoupper(generateRandomString(2));
 		$randomNum = mt_rand(10,99);
 
@@ -53,10 +55,11 @@ class TransactionController extends Controller
 								$fromCustomer[0]->stripecustomer->customer_id) ? 
 								$fromCustomer[0]->accounts->balance : 
 								$request->amount;
-
+		
 		// Binding
-		$transaction->from = $fromCustomer[0]->accounts->id;
-		$transaction->to = $toCustomer[0]->id;
+		$txnparticipants->from_user_id = $fromCustomer[0]->accounts->id;
+		$txnparticipants->to_user_id = $toCustomer[0]->id;
+		$txnparticipants->transaction_id = Transaction::count() + 1;
 		$transaction->details = "transaction ID: F".$randomNum.$randomString;
 		$transaction->amount = $request->amount;
 		$transaction->message = $request->message;
@@ -64,6 +67,7 @@ class TransactionController extends Controller
 		
 		// Update Records and Send Notifications
 		if ($transaction->save()){
+			$txnparticipants->save();
 			$fromUser = User::find($request->from);
 			$toUser = User::find($toCustomer[0]->id);
 
@@ -95,7 +99,8 @@ class TransactionController extends Controller
 
     public function show($id)
     {
-		$txn = User::find($id);
+		$txn = User::with('accounts')->where('id', $id)->get();
+		dd($txn);
 		if (isset($txn)){
 			return $txn->accounts->transactions;
 		}

@@ -13,6 +13,7 @@ trait StripeHelpersTrait {
                             'customer' => $customer_id,
                             'type' => 'card',
                             ]);
+
             try {
                 \Stripe\PaymentIntent::create([
                     'amount' => $newAmount * 100,

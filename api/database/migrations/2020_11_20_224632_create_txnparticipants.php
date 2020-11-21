@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAccountTransactionTable extends Migration
+class CreateTxnparticipants extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateAccountTransactionTable extends Migration
      */
     public function up()
     {
-        Schema::create('account_transaction', function (Blueprint $table) {
+        Schema::create('txnparticipants', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('from_user_id')->nullable();
+            $table->bigInteger('to_user_id')->nullable();
+            $table->integer('transaction_id')->nullable()->unique()->unsigned();
             $table->timestamps();
-            $table->bigInteger('account_id')->unsigned()->nullable();
-            $table->bigInteger('transaction_id')->unsigned()->nullable();
         });
     }
 
@@ -28,6 +29,6 @@ class CreateAccountTransactionTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('account_transaction');
+        Schema::dropIfExists('txnparticipants');
     }
 }
