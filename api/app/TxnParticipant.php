@@ -12,11 +12,11 @@ class TxnParticipant extends Model
         return $this->belongsTo('App\Transaction');
     }
 
-    public function fromUser(){
-        return $this->hasOne('App\User', 'from_user_id');
+    public function toUser(){
+        return $this->hasOne('App\User', 'id', 'to_user_id');
     }
 
-    public function toUser(){
-        return $this->hasOne('App\User', 'to_user_id');
+    public function fromUser(){
+        return $this->hasOne('App\User', 'id', 'from_user_id');
     }
 }

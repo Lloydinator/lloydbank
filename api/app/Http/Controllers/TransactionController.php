@@ -16,7 +16,9 @@ class TransactionController extends Controller
 	use StripeHelpersTrait;
 
 	public function index(){
-		$txn = Transaction::where('publictxn', 1)->get();
+		$txn = Transaction::with([
+			'txnparticipants.toUser', 'txnparticipants.fromUser'
+		])->get();
 		return $txn;
 	}
 	
@@ -99,10 +101,9 @@ class TransactionController extends Controller
 
     public function show($id)
     {
-		$txn = User::with('accounts')->where('id', $id)->get();
-		dd($txn);
-		if (isset($txn)){
-			return $txn->accounts->transactions;
-		}
+		$txn = TxnParticipant::with(['toUser', 'fromUser'])
+							->where('from_user_id', $id)
+							->get();
+		return $txn;
 	}
 }
