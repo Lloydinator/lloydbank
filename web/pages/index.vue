@@ -32,7 +32,7 @@
       >
         <!-- post card -->
         <div 
-          class="flex bg-white shadow-lg rounded-lg mx-4 md:mx-auto my-56 max-w-xl md:max-w-2xl "
+          class="flex bg-white shadow-lg rounded-lg mx-4 md:mx-auto my-4 max-w-xl md:max-w-2xl "
           :key="transaction.id"
           v-for="transaction in transactions"
         >
@@ -40,13 +40,13 @@
               <img class="w-12 h-12 rounded-full object-cover mr-4 shadow" src="https://images.unsplash.com/photo-1542156822-6924d1a71ace?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60" alt="avatar">
               <div class="">
                 <div class="flex items-center justify-between">
-                    <h2 class="text-lg font-semibold text-gray-900 -mt-1">{{transaction.from}}</h2>
-                    <small class="text-sm text-gray-700">{{transaction.created_at}}</small>
+                    <h2 class="text-lg font-semibold text-gray-900 -mt-1">{{transaction.txnparticipants.from_user.name}}</h2>
+                    <small class="text-sm text-gray-700">{{$moment(transaction.created_at).format("ddd, hA")}}</small>
                 </div>
-                <p class="text-gray-700">Joined 12 SEP 2012. </p>
-                <p class="mt-3 text-gray-700 text-sm">
-                    Sent ${{transaction.amount}} to {{transaction.to}} 
+                <p class="mt-1 text-gray-700 text-md">
+                    Sent <span class="text-md font-bold text-teal-800">${{transaction.amount}}</span> to {{transaction.txnparticipants.to_user.name}} 
                 </p>
+                <p class="mt-4 text-lg font-sans ">" {{transaction.message}} "</p>
                 <div class="mt-4 flex items-center">
                     <div class="flex mr-2 text-gray-700 text-sm mr-3">
                       <svg fill="none" viewBox="0 0 24 24"  class="w-4 h-4 mr-1" stroke="currentColor">

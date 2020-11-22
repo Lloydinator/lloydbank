@@ -17,8 +17,10 @@ class TransactionController extends Controller
 
 	public function index(){
 		$txn = Transaction::with([
-			'txnparticipants.toUser', 'txnparticipants.fromUser'
-		])->get();
+						'txnparticipants.toUser', 'txnparticipants.fromUser'
+						])
+						->orderBy('created_at', 'desc')
+						->get();
 		return $txn;
 	}
 	

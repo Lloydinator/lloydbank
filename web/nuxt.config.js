@@ -34,13 +34,19 @@ export default {
   */
   plugins: [
     //{url: 'https://js.stripe.com/v3/', mode: 'client'},
+    {src: '~/plugins/infiniteloading', ssr: false}
   ],
   /*
   ** Nuxt.js dev-modules
   */
   buildModules: [
     '@nuxtjs/fontawesome',
+    '@nuxtjs/moment'
   ],
+
+  moment: {
+
+  },
 
   fontawesome: {
     icons: {
