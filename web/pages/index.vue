@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div class="">
+
+    </div>
     <div class="flex justify-center mt-8">
       <ul class="flex border-b">
         <li class="mr-1">
@@ -24,22 +27,22 @@
         </li>
       </ul>
     </div>
-    <div class="flex justify-center">
+    <div class="">
       <div 
-        class="border bg-white rounded mx-auto"
+        class="border bg-white rounded lg:w-7/12 md:w-10/12 xs:11/12 mx-auto"
         :class="{'active show': isActive('personal')}"
         id="personal"
       >
         <!-- post card -->
         <div 
-          class="flex bg-white shadow-lg rounded-lg mx-4 md:mx-auto my-4 max-w-xl md:max-w-2xl "
+          class="flex bg-white shadow-lg rounded-lg mx-auto my-4 max-w-xl md:max-w-2xl "
           :key="transaction.id"
           v-for="transaction in transactions"
         >
           <div class="flex items-start px-4 py-6">
               <img class="w-12 h-12 rounded-full object-cover mr-4 shadow" src="https://images.unsplash.com/photo-1542156822-6924d1a71ace?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60" alt="avatar">
               <div class="">
-                <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-12 justify-between">
                     <h2 class="text-lg font-semibold text-gray-900 -mt-1">{{transaction.txnparticipants.from_user.name}}</h2>
                     <small class="text-sm text-gray-700">{{$moment(transaction.created_at).format("ddd, hA")}}</small>
                 </div>
@@ -73,8 +76,6 @@
       </div>
     </div>
   </div>
-  <!-- component -->
-
 </template>
 <script>
 import Vue from "vue"
@@ -104,6 +105,7 @@ export default {
         }
       )
       .catch(e => console.log(e.message))
+
     this.$axios
       .get(`transactions/account/${this.$auth.$state.user.id}`, {
         headers: {
@@ -122,6 +124,7 @@ export default {
     isActive(menuItem){
       return this.activeItem === menuItem
     },
+
     setActive(menuItem){
       this.activeItem = menuItem
     }

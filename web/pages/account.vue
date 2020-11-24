@@ -139,41 +139,15 @@ export default {
         ...mapGetters(['loggedInUser'])
     },
     
-    mounted(){
-        this.stripe = Stripe(process.env.PUB_KEY)
-        
-        this.$axios.get('account/card',
-            {
-                header: {
-                    'Authorization': this.$auth.getToken('local')
-                }
-            }
-        )
-        .then(res => 
-        {
-            this.cardnumber = res.data.card.last4
-            this.cardbrand = res.data.card.brand
-        })
+    mounted(){       
+        this.getAccountInfo()
 
-        this.$axios.get('account/me',
-            {
-                header: {
-                    'Authorization': this.$auth.getToken('local')
-                }
-            }
-        ).then(
-            res => {
-                this.account = res.data[0].accounts
-                this.balance = res.data[0].accounts.balance
-            }
-        )
-        var elements = this.stripe.elements()
-        this.card = elements.create('card')
-        this.card.mount(this.$refs.cardelement)
-        this.getIntent()
+        this.setElement()
     },
     methods: {
-        setupIntent(){
+        setupIntent($event){
+            $event.target.disabled = true
+
             this.stripe.confirmCardSetup(
                 this.clientSecret,
                 {
@@ -189,32 +163,48 @@ export default {
                 res => {
                     if (res.error){
                         this.error = "Something went wrong"
+                        this.$fire({
+                            title: "Error!",
+                            text: "Something went wrong",
+                            type: 'error',
+                            timer: 3000
+                        })
                     }
                     else {
                         this.card.clear()
-                        window.location.reload(true)
+                        this.$fire({
+                            title: "Success!",
+                            text: "Card was successfully added.",
+                            type: 'success',
+                            timer: 3000
+                        })
+                        this.getAccountInfo()
+                        this.setElement()
                     }
                 }
             )
         },
         async getIntent(){
-            self = this
-            self.$axios.get(`account/setup-intent/${self.$auth.$state.user.id}`,
+            this.$axios.get(`account/setup-intent/${this.$auth.$state.user.id}`,
                 {
                     header: {
-                        'Authorization': self.$auth.getToken('local')
+                        'Authorization': this.$auth.getToken('local')
                     }
                 }
             )
             .then(
                 res => {
-                    self.clientSecret = res.data.intent
+                    this.clientSecret = res.data.intent
                 }
             )
-            .catch(e => console.log(e))
+            .catch(e => {
+                this.error = "Something went wrong"
+            })
         },
-        async onSubmit(e){
-            e.preventDefault()
+        async onSubmit(event){
+            event.preventDefault()
+            event.target.disabled = true
+            
             const data = new FormData()
             data.append('userid', this.$auth.$state.user.id)
             data.append('phone', this.userData.phone)
@@ -231,14 +221,63 @@ export default {
                         }
                     }
                 )
-                this.message = response.data.message
-                window.location.reload(true)
+                this.$fire({
+                    title: "Success!",
+                    text: response.data.message,
+                    type: 'success',
+                    timer: 3000
+                })
                 this.clearFields()
+                this.getAccountInfo()
+                this.setElement()
             }
             catch(e){
-                this.error = "Something went wrong"
+                $fivehundred = `Something was wrong with the info you put.`
+                $elser = "Something went horribly wrong."
+                this.error = e.response.status == 500 ? fivehundred : elser
+                this.$fire({
+                    title: "Error!",
+                    text: this.error,
+                    type: "error",
+                })
             }
+        },
+        getAccountInfo(){
+            this.$axios.get('account/card',
+                {
+                    header: {
+                        'Authorization': this.$auth.getToken('local')
+                    }
+                }
+            )
+            .then(res => 
+            {
+                this.cardnumber = res.data.card.last4
+                this.cardbrand = res.data.card.brand
+            })
+
+            this.$axios.get('account/me',
+                {
+                    header: {
+                        'Authorization': this.$auth.getToken('local')
+                    }
+                }
+            )
+            .then(
+                res => {
+                    this.account = res.data[0].accounts
+                    this.balance = res.data[0].accounts.balance
+                }
+            )
         }, 
+        setElement(){
+            this.getIntent()
+
+            this.stripe = Stripe(process.env.PUB_KEY)
+            var elements = this.stripe.elements()
+            this.card = elements.create('card')
+            this.card.mount(this.$refs.cardelement)
+        },
         clearFields(){
             this.userData.phone = ""
             this.userData.street = ""

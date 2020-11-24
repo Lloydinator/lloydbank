@@ -43,7 +43,7 @@ class AccountController extends Controller
 			$thisAccount->save();
 
 			return response()->json([
-				'message' => 'Account created.'
+				'message' => 'Account created. Your info will load in a bit...'
 			], 201);
 		}
 		else {
@@ -58,7 +58,9 @@ class AccountController extends Controller
 		// Create setup intent
 		if (Account::where('userid', $request->id)->exists()){
 			$intent = SetupIntent::create([
-				'customer' => User::find($request->id)->stripecustomer->customer_id,
+				'customer' => User::find($request->id)
+									->stripecustomer
+									->customer_id,
 			]);
 			return response()->json([
 				'message' => 'Setting up your card.', 

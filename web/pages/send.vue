@@ -94,11 +94,26 @@ export default {
             data.append('publictxn', this.pick)
             try {
                 const response = await this.$axios.post('transaction/new', data)
-                console.log(response)
+                this.success = `You just sent ${response.data.sent}. 
+                                Your balance is now ${response.data.balance}`
+                this.$fire({
+                    title: "Success!",
+                    text: this.success,
+                    type: 'success',
+                    timer: 3000
+                })
                 this.clearFields()
             }
             catch(e){
-                this.error = e.response.data.message
+                const fivehundred = `Something went horribly wrong. 
+                                    You may have already been charged. Contact us.`
+                const elser = "Something went wrong"
+                this.error = e.response.status == 500 ? fivehundred : elser
+                this.$fire({
+                    title: "Error!",
+                    text: this.error,
+                    type: "error",
+                })
             }
         }, 
         clearFields(){

@@ -19,6 +19,7 @@ class TransactionController extends Controller
 		$txn = Transaction::with([
 						'txnparticipants.toUser', 'txnparticipants.fromUser'
 						])
+						->where('publictxn', 1)
 						->orderBy('created_at', 'desc')
 						->get();
 		return $txn;

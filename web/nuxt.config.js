@@ -10,7 +10,8 @@ export default {
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: process.env.npm_package_description || '' }
+      { hid: 'description', name: 'description', content: process.env.npm_package_description || '' },
+      { name: 'theme-color', content: '#319795'}
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
@@ -34,7 +35,7 @@ export default {
   */
   plugins: [
     //{url: 'https://js.stripe.com/v3/', mode: 'client'},
-    {src: '~/plugins/infiniteloading', ssr: false}
+    '~/plugins/simplealert.js'
   ],
   /*
   ** Nuxt.js dev-modules
@@ -66,6 +67,7 @@ export default {
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
     'nuxt-purgecss',
+    'vue-simple-alert'
   ],
   purgeCSS: {
     mode: 'postcss',
