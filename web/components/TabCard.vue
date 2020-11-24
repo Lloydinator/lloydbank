@@ -3,7 +3,7 @@
         <div class="flex justify-center mt-8">
             <ul class="flex">
                 <li
-                    class="cursor-pointer inline-block border-l border-t border-r rounded-t py-2 px-4 mr-1 text-blue-700 font-semibold"
+                    class="cursor-pointer inline-block border-l border-t border-r rounded-t py-2 px-4 mr-1 text-blue-700 text-xl font-semibold"
                     v-for="tab in tabs"
                     :key="tab"
                     v-bind:class="{
