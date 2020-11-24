@@ -23,8 +23,8 @@
                 </div>
             </section>
             <!-- component -->
-            <div class="leading-loose">
-                <div class="max-w-xl m-4 p-10 bg-white rounded shadow-xl">
+            <div class="flex justify-center leading-loose mt-4">
+                <div class="w-full max-w-xl md:m-4 p-10 bg-white rounded shadow-xl">
                     <p class="text-gray-800 font-medium border-b border-black mb-4">Customer information</p>
                     <Message :message="error" v-if="error" />
                     <Message :message="success" v-if="success" />
@@ -232,7 +232,7 @@ export default {
                 this.setElement()
             }
             catch(e){
-                $fivehundred = `Something was wrong with the info you put.`
+                $fivehundred = "Something was wrong with the info you put."
                 $elser = "Something went horribly wrong."
                 this.error = e.response.status == 500 ? fivehundred : elser
                 this.$fire({

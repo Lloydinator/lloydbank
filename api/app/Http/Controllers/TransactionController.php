@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 //use App\Http\Requests\TxnStoreRequest;
+use Illuminate\Database\Eloquent\Builder;
 use App\Traits\NotificationTrait;
 use App\Traits\StripeHelpersTrait;
 use App\Transaction;
@@ -54,6 +55,9 @@ class TransactionController extends Controller
 			);	
 		}	
 
+		$scrubbedmessage = $request->message == "undefined" ? 
+												null : $request->message;
+
 		// Checking to see if card was swiped and assign value to $amount based on that
 		$amount = $this->swipeThatCard($fromCustomer[0]->accounts->balance, 
 								$request->amount, 
@@ -67,7 +71,7 @@ class TransactionController extends Controller
 		$txnparticipants->transaction_id = Transaction::count() + 1;
 		$transaction->details = "transaction ID: F".$randomNum.$randomString;
 		$transaction->amount = $request->amount;
-		$transaction->message = $request->message;
+		$transaction->message = $scrubbedmessage;
 		$transaction->publictxn = $request->publictxn;
 		
 		// Update Records and Send Notifications
@@ -104,8 +108,9 @@ class TransactionController extends Controller
 
     public function show($id)
     {
-		$txn = TxnParticipant::with(['toUser', 'fromUser'])
+		$txn = TxnParticipant::with(['toUser', 'fromUser', 'transaction'])
 							->where('from_user_id', $id)
+							->orderBy('created_at', 'desc')
 							->get();
 		return $txn;
 	}
