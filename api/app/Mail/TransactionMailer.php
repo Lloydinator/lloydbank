@@ -32,6 +32,6 @@ class TransactionMailer extends Mailable
     {
         return $this->from('lloydmiller@outlook.com')
                     ->subject($this->transaction->to.' sent you $'.$this->transaction->amount)
-                    ->view('tansaction');
+                    ->text('tansaction');
     }
 }
