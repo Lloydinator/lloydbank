@@ -2,7 +2,7 @@
 <!-- component -->
 <div class="bg-gray-200 min-h-screen pt-2 font-mono my-16">
     <div class="container mx-auto">
-        <div class="inputs w-full max-w-2xl p-6 mx-auto">
+        <div class="inputs w-full max-w-2xl md:p-6 mx-auto">
             <h2 class="text-2xl border-b border-gray-400 text-gray-900">Account</h2>
             <section class="section">
                 <div class="container">
@@ -24,7 +24,7 @@
             </section>
             <!-- component -->
             <div class="flex justify-center leading-loose mt-4">
-                <div class="w-full max-w-xl md:m-4 p-10 bg-white rounded shadow-xl">
+                <div class="w-full max-w-xl md:m-4 px-2 py-6 md:p-10 bg-white rounded shadow-xl">
                     <p class="text-gray-800 font-medium border-b border-black mb-4">Customer information</p>
                     <Message :message="error" v-if="error" />
                     <Message :message="success" v-if="success" />

@@ -61,8 +61,8 @@
           <!-- post card -->
           <div 
             class="flex bg-white shadow-lg rounded-lg mx-auto my-4 max-w-xl md:max-w-2xl "
-            :key="transaction.id"
             v-for="transaction in transactions"
+            :key="transaction.id"
           >
             <div class="flex items-start px-4 py-6">
                 <img class="w-12 h-12 rounded-full object-cover mr-4 shadow" src="https://images.unsplash.com/photo-1542156822-6924d1a71ace?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60" alt="avatar">
@@ -109,8 +109,8 @@
           <!-- post card -->
           <div 
             class="flex bg-white shadow-lg rounded-lg mx-auto my-4 max-w-xl md:max-w-2xl "
-            :key="mytransaction.id"
             v-for="mytransaction in mytransactions"
+            :key="mytransaction.id"
           >
             <div class="flex items-start px-4 py-6">
                 <img class="w-12 h-12 rounded-full object-cover mr-10 shadow" src="https://images.unsplash.com/photo-1542156822-6924d1a71ace?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60" alt="avatar">
@@ -213,6 +213,7 @@ export default {
       .then(res => {
           let mytxn = res.data
           mytxn.forEach(data => this.mytransactions.push(data))
+          console.log(this.mytransactions)
         }
       )
       .catch(e => {

@@ -100,7 +100,7 @@ export default {
           logout: {url: 'auth/logout', method: 'post'},
         },
         token: {
-          maxAge: 5 * 60
+          maxAge: 60 * 15
         },
         refreshToken: {
           maxAge: 20160 * 60

@@ -3,10 +3,10 @@
     <div>
         <div class="inputs w-full max-w-2xl p-6 mx-auto" v-if="card">
             <form class="mt-1 pt-4">
-                <div class="max-w-xl m-4 p-10 bg-white rounded shadow-xl">
+                <div class="max-w-xl md:m-4 px-2 py-6 bg-white rounded shadow-xl">
                     <h2 class="text-xl text-gray-900 mb-10 pb-2 border-b border-black">Send to:</h2>
                     <Message :message="error" v-if="error" />
-                    <div class='w-full md:w-full px-3 mb-6'>
+                    <div class='w-full md:w-full md:px-3 mb-6'>
                         <label class='block uppercase tracking-wide text-gray-700 text-xl font-mono mb-2' >Email Address</label>
                         <input 
                             class='appearance-none block w-full bg-white text-gray-700 border border-gray-400 shadow-inner rounded-md py-3 px-4 leading-tight focus:outline-none  focus:border-gray-500' 
@@ -14,7 +14,7 @@
                             v-model="money.email"
                             required>
                     </div>
-                    <div class='w-full md:w-full px-3 mb-6'>
+                    <div class='w-full md:w-full md:px-3 mb-6'>
                         <label class='block uppercase tracking-wide text-gray-700 text-xl font-mono mb-2'>Amount</label>
                         <div class="flex">
                             <span class="text-4xl mr-2">$</span>
@@ -25,7 +25,7 @@
                                 required>
                         </div>
                     </div>
-                    <div class='w-full md:w-full px-3 mb-6'>
+                    <div class='w-full md:w-full md:px-3 mb-6'>
                         <label class='block uppercase tracking-wide text-gray-700 text-xl font-mono mb-2' >Message</label>
                         <textarea 
                             class='bg-gray-100 rounded-md border leading-normal resize-none w-full h-20 py-2 px-3 shadow-inner border-gray-400 font-medium placeholder-gray-700 focus:outline-none focus:bg-white' 
@@ -34,13 +34,13 @@
                             required>
                         </textarea>
                     </div>
-                    <div class="mb-6">
+                    <div class="mb-6 pl-4">
                         <input 
                         type="radio" 
                         v-model="pick" 
                         :value="1"
                         >
-                        <span class="text-sm">
+                        <span class="text-md mr-8">
                             Public
                         </span>
                         <input 
@@ -48,7 +48,7 @@
                         v-model="pick" 
                         :value="0"
                         >
-                        <span class="text-sm">
+                        <span class="text-md">
                             Private
                         </span>
                     </div>
