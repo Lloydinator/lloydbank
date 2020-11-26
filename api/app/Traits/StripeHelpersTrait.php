@@ -7,7 +7,7 @@ trait StripeHelpersTrait {
         if ($balance < $amount){
             $newAmount = $amount - $balance;
 
-            \Stripe\Stripe::setApiKey('sk_test_WOvPHpplMVyTJV2UJsIrPl27');
+            \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
 
             $card = \Stripe\PaymentMethod::all([
                             'customer' => $customer_id,
