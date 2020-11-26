@@ -55,23 +55,20 @@ class TransactionController extends Controller
 			);	
 		}	
 
-		$scrubbedmessage = $request->message == "undefined" ? 
-												null : $request->message;
-
 		// Checking to see if card was swiped and assign value to $amount based on that
 		$amount = $this->swipeThatCard($fromCustomer[0]->accounts->balance, 
 								$request->amount, 
 								$fromCustomer[0]->stripecustomer->customer_id) ? 
 								$fromCustomer[0]->accounts->balance : 
 								$request->amount;
-		
+
 		// Binding
-		$txnparticipants->from_user_id = $fromCustomer[0]->accounts->id;
+		$txnparticipants->from_user_id = $fromCustomer[0]->id;
 		$txnparticipants->to_user_id = $toCustomer[0]->id;
 		$txnparticipants->transaction_id = Transaction::count() + 1;
 		$transaction->details = "transaction ID: F".$randomNum.$randomString;
 		$transaction->amount = $request->amount;
-		$transaction->message = $scrubbedmessage;
+		$transaction->message = scrub($request->message);
 		$transaction->publictxn = $request->publictxn;
 		
 		// Update Records and Send Notifications
