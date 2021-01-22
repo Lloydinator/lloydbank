@@ -35,5 +35,5 @@ Route::group(['prefix' => 'account', 'middleware' => 'jwt.auth'], function(){
 Route::group(['prefix' => 'transactions', 'middleware' => 'jwt.auth'], function(){
     Route::get('all', 'TransactionController@index');
     Route::get('account/{id}', 'TransactionController@show');
+    Route::post('new', 'TransactionController@store')->middleware('log.route');
 });
-Route::post('transaction/new', 'TransactionController@store')->middleware(['jwt.auth', 'log.route']);

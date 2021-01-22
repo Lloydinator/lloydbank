@@ -100,9 +100,8 @@ export default {
             data.append('message', this.money.txnmessage)
             data.append('publictxn', this.pick)
             try {
-                const response = await this.$axios.post('transaction/new', data)
-                this.success = `You just sent ${response.data.sent}. 
-                                Your balance is now ${response.data.balance}`
+                const response = await this.$axios.post('transactions/new', data)
+                this.success = response.data.message
                 this.$fire({
                     title: "Success!",
                     text: this.success,
@@ -112,10 +111,9 @@ export default {
                 this.clearFields()
             }
             catch(e){
-                const fivehundred = `Something went horribly wrong. 
-                                    You may have already been charged. Contact us.`
                 const elser = "Something went wrong"
-                this.error = e.response.status == 500 ? fivehundred : elser
+                this.error = e.response.data.errors.email ? 
+                                e.response.data.errors.email[0] : elser
                 this.$fire({
                     title: "Error!",
                     text: this.error,

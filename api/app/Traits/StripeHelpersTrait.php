@@ -25,12 +25,9 @@ trait StripeHelpersTrait {
                 ]);
             } 
             catch (\Stripe\Exception\CardException $e){
-                $payment_intent_id = $e->getError()->code;
-                $payment_intent = \Stripe\PaymentIntent::retrieve($payment_intent_id);
                 return response()->json([
-                    'message' => 'Error code is'.$e->getError()->code,
-                    'payment_intent' => $payment_intent
-                ]);
+                    'message' => 'Error. '.$e->getMessage()
+                ], $e->getCode() ? $e->getCode() : 500);
             }
 
             return true;

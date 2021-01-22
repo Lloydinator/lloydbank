@@ -57,8 +57,8 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
-    public function accounts(){
-        return $this->hasOne('App\Account', 'userid');
+    public function account(){
+        return $this->hasOne('App\Account');
     }
 
     public function stripecustomer(){

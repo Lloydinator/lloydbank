@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-//use App\Http\Requests\TxnStoreRequest;
+use App\Http\Requests\TxnStoreRequest;
 use App\Traits\NotificationTrait;
 use App\Traits\StripeHelpersTrait;
 use App\Transaction;
@@ -30,81 +29,51 @@ class TransactionController extends Controller
 		return $txn;
 	}
 	
-    public function store(Request $request)
+    public function store(TxnStoreRequest $request)
     {
-		//$request->validated();
+		$request->validated();
 
-		// Get User ID from Email Address
-		$toCustomer = User::with('accounts')
-							->where('email', $request->email)
-							->get();
+		try {
+			$transaction = new Transaction;
 
-		// Get Customer ID from User ID
-		$fromCustomer = User::with(['accounts', 'stripecustomer'])
-								->where('id', $request->from)
+			$toCustomer = User::where('email', $request->email)
+								->select(['id'])
 								->get();
-		
-		// Set variables
-		$transaction = new Transaction;
-		$txnparticipants = new TxnParticipant;
-		$randomString = strtoupper(generateRandomString(2));
-		$randomNum = mt_rand(10,99);
+			$fromCustomer = User::find($request->from);
 
-		// Final check
-		if (!finalCheck($request->from, $toCustomer[0]->id)){
-			abort(422, [
-				'message' => "Something was wrong with your request. Make sure 
-								you're not sending money to yourself."
-				]
-			);	
-		}	
+			$amount = $this->swipeThatCard($fromCustomer->account->balance, 
+									$request->amount, 
+									$fromCustomer->stripecustomer->customer_id) ? 
+									$fromCustomer->account->balance : 
+									$request->amount;
 
-		// Checking to see if card was swiped and assign value to $amount based on that
-		$amount = $this->swipeThatCard($fromCustomer[0]->accounts->balance, 
-								$request->amount, 
-								$fromCustomer[0]->stripecustomer->customer_id) ? 
-								$fromCustomer[0]->accounts->balance : 
-								$request->amount;
+			$transaction->from = $fromCustomer->id;
+			$transaction->to = $toCustomer[0]->id;
+			$transaction->details = "transaction ID: ".generateRandomString(2);
+			$transaction->amount = $request->amount;
+			$transaction->message = scrub($request->message);
+			$transaction->publictxn = $request->publictxn;
 
-		// Binding
-		$txnparticipants->from_user_id = $fromCustomer[0]->id;
-		$txnparticipants->to_user_id = $toCustomer[0]->id;
-		$txnparticipants->transaction_id = Transaction::count() + 1;
-		$transaction->details = "transaction ID: F".$randomNum.$randomString;
-		$transaction->amount = $request->amount;
-		$transaction->message = scrub($request->message);
-		$transaction->publictxn = $request->publictxn;
-		
-		// Update Records and Send Notifications
-		if ($transaction->save()){
-			$txnparticipants->save();
-			$fromUser = User::find($request->from);
+			$transaction->save();
+
 			$toUser = User::find($toCustomer[0]->id);
 
-			$fromUser->accounts->balance = $fromCustomer[0]->accounts->balance - $amount;
-			$toUser->accounts->balance = $toCustomer[0]->accounts->balance + $request->amount;
+			$fromCustomer->account->balance -= $amount;
+			$toUser->account->balance += $request->amount;
 			
-			$fromUser->push();
+			$fromCustomer->push();
 			$toUser->push();
 
-			$text = "Hey ".$toCustomer[0]->name.", ".$fromCustomer[0]->name;
-			$text .= " just sent you $".$request->amount.". Check "; 
-			$text .= "the LloydBank website for more info.";
-			
-			$this->textMessage(
-				env('TWILIO_PHONE'),
-				$toCustomer[0]->accounts->phone,
-				$text
-			);
-
 			return response()->json([
-				'sent' => '$'.$request->amount,
-				'balance' => '$'.$fromUser->accounts->balance
+				'message' => 'You just sent $'.$request->amount.' to '.$toUser->name
 			], 201);
 		}
-		else {
-			abort(400, "Something went wrong. You should try again.");
-		}
+		
+		catch(\Exception $e){
+            return response()->json([
+                'message' => 'Something went wrong. Code: '.$e->getMessage()
+            ], $e->getCode() ? $e->getCode() : 400);
+        }      
 	}
 
     public function show($id)

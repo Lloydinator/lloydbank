@@ -56,7 +56,7 @@ class AccountController extends Controller
 	public function setupIntent(Request $request)
 	{
 		// Create setup intent
-		if (Account::where('userid', $request->id)->exists()){
+		if (Account::where('user_id', $request->id)->exists()){
 			$intent = SetupIntent::create([
 				'customer' => User::find($request->id)
 									->stripecustomer
@@ -70,15 +70,17 @@ class AccountController extends Controller
 		else {
 			return response()->json([
 				'message' => 'No account found to create an intent.', 
-			], 200);
+			], 400);
 		}
 	}
 	
     public function show()
     {
-		$id = Auth::user()->id;
-        if (User::where('id', $id)->exists()){
-			$account = User::with(['accounts', 'stripecustomer'])->where('id', $id)->get()->toJson(JSON_PRETTY_PRINT);
+        if (User::where('id', Auth::id())->exists()){
+			$account = User::with(['account', 'stripecustomer'])
+							->where('id', Auth::id())
+							->get()
+							->toJson(JSON_PRETTY_PRINT);
 			return $account;
 		}
 		else {
@@ -89,15 +91,13 @@ class AccountController extends Controller
 	}
 
 	public function getCard(){
-		$id = Auth::user()->id;
-		$customer = User::with('stripecustomer')->where('id', $id)->get();
+		$customer = User::with('stripecustomer')->where('id', Auth::id())->get();
 
 		$card = \Stripe\PaymentMethod::all([
 				'customer' => $customer[0]->stripecustomer->customer_id,
 				'type' => 'card',
 			]
 		);
-
-		return $card->data[0];
+		return count($card->data) === 0 ? null: $card->data[0];
 	}
 }

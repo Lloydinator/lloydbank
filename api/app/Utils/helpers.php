@@ -1,27 +1,21 @@
 <?php
 
 if (!function_exists('generateRandomString')){
-    function generateRandomString($length = 0){
+    function generateRandomString($length){
         $chars = 'abcdefghijklmnopqrstuvwxyz';
         $charLength = strlen($chars);
         $randStr = '';
+        $finalStr = '';
         $i = 0;
+        $randomNum = mt_rand(10,99);
 
         while ($i < $length) {
             $randStr .= $chars[mt_rand(0, $charLength - 1)];
             $i++;
         }
 
-        return $randStr;
-    }
-}
-
-if (!function_exists('finalCheck')){
-    function finalCheck($from, $to){
-        if ($from == $to){
-            return false;
-        }
-        return true;
+        $finalStr = 'F'.$randomNum.strtoupper($randStr);
+        return $finalStr;
     }
 }
 

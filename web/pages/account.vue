@@ -265,8 +265,8 @@ export default {
             )
             .then(
                 res => {
-                    this.account = res.data[0].accounts
-                    this.balance = res.data[0].accounts.balance
+                    this.account = res.data[0].account
+                    this.balance = res.data[0].account.balance
                 }
             )
         }, 
