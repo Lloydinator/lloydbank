@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 //use App\Http\Requests\TxnStoreRequest;
-use Illuminate\Database\Eloquent\Builder;
 use App\Traits\NotificationTrait;
 use App\Traits\StripeHelpersTrait;
 use App\Transaction;
-use App\TxnParticipant;
 use App\User;
 
 class TransactionController extends Controller
@@ -16,13 +15,18 @@ class TransactionController extends Controller
 	use NotificationTrait;
 	use StripeHelpersTrait;
 
+	function __construct()
+	{
+		if (!Auth::id()){
+			abort(403, 'Unauthorized');
+		}
+	}
+
 	public function index(){
-		$txn = Transaction::with([
-						'txnparticipants.toUser', 'txnparticipants.fromUser'
-						])
-						->where('publictxn', 1)
-						->orderBy('created_at', 'desc')
-						->get();
+		$txn = Transaction::with(['user_from', 'user_to'])
+							->where('publictxn', 1)
+							->orderBy('created_at', 'desc')
+							->get();
 		return $txn;
 	}
 	

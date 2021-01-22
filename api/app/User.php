@@ -65,7 +65,11 @@ class User extends Authenticatable implements JWTSubject
 		return $this->hasOne('App\StripeCustomer', 'user_id');
     }
     
-    public function txnparticipant(){
-        return $this->belongsTo('App\TxnParticipant');
+    public function txn_from(){
+        return $this->hasMany('App\TxnParticipant', 'from');
+    }
+
+    public function txn_to(){
+        return $this->hasMany('App\TxnParticipant', 'to');
     }
 }

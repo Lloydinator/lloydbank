@@ -23,7 +23,7 @@ class AccountController extends Controller
     public function store(Request $request)
     {
 		$account = new Account();
-		$account->userid = $request->userid;
+		$account->user_id = $request->user_id;
 		$account->phone = $request->phone;
 		$account->street = $request->street;
 		$account->city = $request->city;
@@ -33,13 +33,13 @@ class AccountController extends Controller
 			// Create Stripe customer
 			$customer = new StripeClient($this->apiKey);
 			$thisCustomer = $customer->customers->create([
-				'email' => User::find($request->userid)->email
+				'email' => User::find($request->user_id)->email
 			]);
 
 			// Save Stripe customer info to db
 			$thisAccount = new StripeCustomer();
 			$thisAccount->customer_id = $thisCustomer->id;
-			$thisAccount->user_id = $request->userid;
+			$thisAccount->user_id = $request->user_id;
 			$thisAccount->save();
 
 			return response()->json([

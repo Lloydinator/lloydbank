@@ -15,12 +15,12 @@ class CreateAccountsTable extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
-            $table->float('balance')->default(0);
-            $table->integer('userid')->nullable()->unique();
-            $table->string('phone')->nullable();
-            $table->string('street')->nullable();
-            $table->string('city')->nullable();
-            $table->string('zip')->nullable();
+            $table->float('balance')->nullable(false)->default(0);
+            $table->bigInteger('user_id')->nullable(false)->unique()->unsigned();
+            $table->string('phone')->nullable(false);
+            $table->string('street')->nullable(false);
+            $table->string('city')->nullable(false);
+            $table->string('zip')->nullable(false);
 			$table->timestamps();
         });
     }
