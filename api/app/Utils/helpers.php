@@ -25,3 +25,18 @@ if (!function_exists('scrub')){
         return $scrubbed;                                 
     }
 }
+
+if (!function_exists('name_explode')){
+    function name_explode($name){
+        $newArr = explode(' ', $name);
+        $shortArr = array();
+        
+        if (count($newArr) >= 3){
+            $first_name = array_shift($newArr);
+            $last_name = implode(' ', $newArr);
+            array_push($shortArr, $first_name, $last_name);
+            return $shortArr;
+        }
+        return $newArr;
+    }
+}

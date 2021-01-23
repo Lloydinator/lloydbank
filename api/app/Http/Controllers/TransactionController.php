@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\TxnStoreRequest;
+use App\Events\TransactionMade;
 use App\Traits\NotificationTrait;
 use App\Traits\StripeHelpersTrait;
 use App\Transaction;
@@ -64,6 +65,8 @@ class TransactionController extends Controller
 			$fromCustomer->push();
 			$toUser->push();
 
+			event(new TransactionMade($transaction, $toUser));
+
 			return response()->json([
 				'message' => 'You just sent $'.$request->amount.' to '.$toUser->name
 			], 201);
@@ -78,8 +81,8 @@ class TransactionController extends Controller
 
     public function show($id)
     {
-		$txn = TxnParticipant::with(['toUser', 'fromUser', 'transaction'])
-							->where('from_user_id', $id)
+		$txn = Transaction::with(['user_from', 'user_to'])
+							->where('user_from', $id)
 							->orderBy('created_at', 'desc')
 							->get();
 		return $txn;
