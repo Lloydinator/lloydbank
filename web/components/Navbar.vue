@@ -23,7 +23,7 @@
                 class="px-3 py-2 flex items-center text-md uppercase font-bold leading-snug text-white hover:opacity-75" 
                 to="/account"
               >
-                {{loggedInUser.name}}
+                My Account
               </nuxt-link>
             </li>
             <li class="nav-item">
