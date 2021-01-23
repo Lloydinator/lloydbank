@@ -12,8 +12,7 @@ use App\User;
 
 class TransactionController extends Controller
 {
-	use NotificationTrait;
-	use StripeHelpersTrait;
+	use NotificationTrait, StripeHelpersTrait;
 
 	function __construct()
 	{

@@ -4,68 +4,48 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\AccountRequest;
+use App\Traits\StripeHelpersTrait;
 use App\Account;
 use App\User;
 use App\StripeCustomer;
-use Stripe\StripeClient;
-use Stripe\SetupIntent;
-use Stripe\Stripe;
 
 class AccountController extends Controller
 {
-	public $apiKey;
+	use StripeHelpersTrait;
 
-	public function __construct(){
-		$this->apiKey = env('STRIPE_SECRET');
-		Stripe::setApiKey($this->apiKey);
-	}
-
-    public function store(Request $request)
+    public function store(AccountRequest $request)
     {
-		$account = new Account();
-		$account->user_id = $request->user_id;
-		$account->phone = $request->phone;
-		$account->street = $request->street;
-		$account->city = $request->city;
-		$account->zip = $request->zip;
-		
-		if ($account->save()){
-			// Create Stripe customer
-			$customer = new StripeClient($this->apiKey);
-			$thisCustomer = $customer->customers->create([
-				'email' => User::find($request->user_id)->email
-			]);
+		$request->validated();
 
-			// Save Stripe customer info to db
-			$thisAccount = new StripeCustomer();
-			$thisAccount->customer_id = $thisCustomer->id;
-			$thisAccount->user_id = $request->user_id;
-			$thisAccount->save();
+		try {
+			Account::create($request->all());
+
+			$thisCustomer = $this->createCustomer(
+				User::find($request->user_id)->email
+			);
+
+			$account = new StripeCustomer();
+			$account->customer_id = $thisCustomer->id;
+			$account->user_id = $request->user_id;
+			$account->save();
 
 			return response()->json([
 				'message' => 'Account created. Your info will load in a bit...'
 			], 201);
 		}
-		else {
+		catch(\Exception $e){
 			return response()->json([
-				'message' => 'Something went wrong.'
-			]);
+				'message' => 'Something went wrong. '.$e->getMessage()
+			], $e->getCode() ? $e->getCode() : 400);
 		}
 	}
 	
 	public function setupIntent(Request $request)
 	{
-		// Create setup intent
 		if (Account::where('user_id', $request->id)->exists()){
-			$intent = SetupIntent::create([
-				'customer' => User::find($request->id)
-									->stripecustomer
-									->customer_id,
-			]);
-			return response()->json([
-				'message' => 'Setting up your card.', 
-				'intent' => $intent->client_secret,
-			]);
+			$customer = User::find($request->id)->stripecustomer->customer_id;
+			return $this->createSetupIntent($customer);
 		}
 		else {
 			return response()->json([
@@ -79,8 +59,7 @@ class AccountController extends Controller
         if (User::where('id', Auth::id())->exists()){
 			$account = User::with(['account', 'stripecustomer'])
 							->where('id', Auth::id())
-							->get()
-							->toJson(JSON_PRETTY_PRINT);
+							->get();
 			return $account;
 		}
 		else {
@@ -92,12 +71,7 @@ class AccountController extends Controller
 
 	public function getCard(){
 		$customer = User::with('stripecustomer')->where('id', Auth::id())->get();
-
-		$card = \Stripe\PaymentMethod::all([
-				'customer' => $customer[0]->stripecustomer->customer_id,
-				'type' => 'card',
-			]
-		);
-		return count($card->data) === 0 ? null: $card->data[0];
+		$card = $this->getPaymentMethod( $customer[0]->stripecustomer->customer_id);
+		return count($card->data) === 0 ? null : $card->data[0];
 	}
 }
