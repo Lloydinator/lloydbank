@@ -3,11 +3,11 @@
 namespace App\Traits;
 
 trait StripeHelpersTrait {
-    function swipeThatCard($balance, $amount, $customer_id){
+    public function swipeThatCard($balance, $amount, $customer_id){
         if ($balance < $amount){
-            $newAmount = $amount - $balance;
+            $this->getApiKey();
 
-            \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+            $newAmount = $amount - $balance;
 
             $card = \Stripe\PaymentMethod::all([
                             'customer' => $customer_id,
@@ -33,5 +33,41 @@ trait StripeHelpersTrait {
             return true;
         }
         return false;
+    }
+
+    public function createSetupIntent($customer_id){
+        $this->getApiKey();
+
+        $intent = \Stripe\SetupIntent::create([
+            'customer' => $customer_id,
+        ]);
+        return response()->json([
+            'message' => 'Setting up your card.', 
+            'intent' => $intent->client_secret,
+        ]);
+    }
+
+    public function getPaymentMethod($customer_id){
+        $this->getApiKey();
+
+        $payment_method = \Stripe\PaymentMethod::all([
+                            'customer' => $customer_id,
+                            'type' => 'card',
+                        ]);
+        return $payment_method;
+    }
+
+    public function createCustomer($email){
+        $this->getApiKey();
+
+        $customer = \Stripe\Customer::create([
+            'email' => $email
+        ]);
+        return $customer;
+    }
+
+    private function getApiKey(){
+        $sk = getenv('STRIPE_SECRET');
+        \Stripe\Stripe::setApiKey($sk);
     }
 }
