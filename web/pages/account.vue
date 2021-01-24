@@ -206,7 +206,7 @@ export default {
             event.target.disabled = true
             
             const data = new FormData()
-            data.append('userid', this.$auth.$state.user.id)
+            data.append('user_id', this.$auth.$state.user.id)
             data.append('phone', this.userData.phone)
             data.append('street', this.userData.street)
             data.append('city', this.userData.city)

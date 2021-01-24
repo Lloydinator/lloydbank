@@ -100,6 +100,7 @@ export default {
             data.append('message', this.money.txnmessage)
             data.append('publictxn', this.pick)
             try {
+                console.log(data)
                 const response = await this.$axios.post('transactions/new', data)
                 this.success = response.data.message
                 this.$fire({

@@ -67,10 +67,10 @@
             <div class="flex items-start px-4 py-6">
                 <img class="w-12 h-12 rounded-full object-cover mr-4 shadow" src="https://images.unsplash.com/photo-1542156822-6924d1a71ace?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60" alt="avatar">
                 <div class="">
-                  <h2 class="text-2xl font-semibold text-gray-900 -mt-1 tracking-wide">{{transaction.txnparticipants.from_user.name}}</h2>
+                  <h2 class="text-2xl font-semibold text-gray-900 -mt-1 tracking-wide">{{transaction.user_from.name}}</h2>
                   <p class="mt-1 text-gray-700 text-lg tracking-wide">
                       Sent <span class="text-md font-bold text-teal-800">${{transaction.amount}}</span> to 
-                      <span class="text-xl text-blue-900">{{transaction.txnparticipants.to_user.name}}</span> 
+                      <span class="text-xl text-blue-900">{{transaction.user_to.name}}</span> 
                   </p>
                   <p 
                     class="mt-4 text-lg font-sans " 
@@ -115,16 +115,16 @@
             <div class="flex items-start px-4 py-6">
                 <img class="w-12 h-12 rounded-full object-cover mr-10 shadow" src="https://images.unsplash.com/photo-1542156822-6924d1a71ace?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60" alt="avatar">
                 <div class="">
-                  <h2 class="text-2xl font-semibold text-gray-900 -mt-1">{{mytransaction.from_user.name}}</h2>
+                  <h2 class="text-2xl font-semibold text-gray-900 -mt-1">{{mytransaction.user_from.name}}</h2>
                   <p class="mt-1 text-gray-700 text-lg">
-                      Sent <span class="text-md font-bold text-teal-800">${{mytransaction.transaction.amount}}</span> to 
-                      <span class="text-xl text-blue-900">{{mytransaction.to_user.name}}</span>
+                      Sent <span class="text-md font-bold text-teal-800">${{mytransaction.amount}}</span> to 
+                      <span class="text-xl text-blue-900">{{mytransaction.user_to.name}}</span>
                   </p>
                   <p 
                     class="mt-4 text-lg font-sans"
-                    v-if="mytransaction.transaction.message != null"
+                    v-if="mytransaction.message != null"
                   >
-                    " {{mytransaction.transaction.message}} "
+                    " {{mytransaction.message}} "
                   </p>
                   <div class="mt-4 flex items-center">
                       <div class="flex mr-8 text-gray-700 text-sm">
@@ -150,8 +150,6 @@
   </div>
 </template>
 <script>
-import Vue from "vue"
-import axios from "axios"
 import TabCard from '~/components/TabCard'
 
 export default {
@@ -174,53 +172,56 @@ export default {
     };
   },
   mounted() {
-    this.$axios
-      .get('account/me',
-          {
-              header: {
-                  'Authorization': this.$auth.getToken('local')
-              }
-          }
-      )
-      .then(
-          res => {
-              this.name = res.data[0].name
-              this.email = res.data[0].email
-              this.balance = res.data[0].accounts.balance
-          }
-      )
-    this.$axios
-      .get('transactions/all', {
-        headers: {
-          'Authorization': this.$auth.getToken('local')
-        }
-      })
-      .then(res => {
-          let txn = res.data
-          txn.forEach(data => this.transactions.push(data))
-        }
-      )
-      .catch(e => {
-        this.error = "Something went wrong"
-      })
-
-    this.$axios
-      .get(`transactions/account/${this.$auth.$state.user.id}`, {
-        headers: {
-          'Authorization': this.$auth.getToken('local')
-        }
-      })
-      .then(res => {
-          let mytxn = res.data
-          mytxn.forEach(data => this.mytransactions.push(data))
-          console.log(this.mytransactions)
-        }
-      )
-      .catch(e => {
-        this.error = "Something went wrong"
-      })
+    this.getAccount()
+    this.getAllTransactions()
+    this.getMyTransactions()
   },
   methods: {
+    async getAccount(){
+      try {
+        let response = await this.$axios.get('account/me', {
+          header: {
+            'Authorization': this.$auth.getToken('local')
+          }
+        })
+        this.name = response.data[0].name
+        this.email = response.data[0].email
+        this.balance = response.data[0].account.balance
+      }
+      catch(e){
+        this.error = "Something went wrong"
+      }
+    },
+    async getAllTransactions(){
+      try {
+        let response = await this.$axios.get('transactions/all', {
+          headers: {
+            'Authorization': this.$auth.getToken('local')
+          }
+        })
+        let txn = response.data
+        txn.forEach(data => this.transactions.push(data))
+      }
+      catch(e){
+        this.error = "Something went wrong"
+      }
+    },
+    async getMyTransactions(){
+      try {
+        let response = await this.$axios.get('transactions/account/'+this.$store.state.auth.user.id, 
+          {
+            headers: {
+              'Authorization': this.$auth.getToken('local')
+            }
+          }
+        )
+        let txn = response.data
+        txn.forEach(data => this.mytransactions.push(data))
+      }
+      catch(e){
+        this.error = "Something went wrong"
+      }
+    },
     isActive(menuItem){
       return this.activeItem === menuItem
     },

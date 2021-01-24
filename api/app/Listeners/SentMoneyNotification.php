@@ -31,7 +31,7 @@ class SentMoneyNotification implements ShouldQueue
         $user_to = name_explode($event->user->name);
         $phone = $event->transaction->user_from->account->phone;
         $amount = $event->transaction->amount; 
-        $message = "Hey {$user_from[0]}, you've just sent ${$amount} to ";
+        $message = "Hey {$user_from[0]}, you've just sent $".$amount." to ";
         $message .= "{$user_to[0]}.";
 
         $twilio = new Twilio;
