@@ -37,7 +37,7 @@ class AccountController extends Controller
 		catch(\Exception $e){
 			return response()->json([
 				'message' => 'Something went wrong. '.$e->getMessage()
-			], $e->getCode() ? $e->getCode() : 400);
+			], 400);
 		}
 	}
 	

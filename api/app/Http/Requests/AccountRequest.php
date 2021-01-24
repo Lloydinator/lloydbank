@@ -13,7 +13,7 @@ class AccountRequest extends APIFormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**

@@ -74,14 +74,14 @@ class TransactionController extends Controller
 		catch(\Exception $e){
             return response()->json([
                 'message' => 'Something went wrong. Code: '.$e->getMessage()
-            ], $e->getCode() ? $e->getCode() : 400);
+            ], 400);
         }      
 	}
 
     public function show($id)
     {
 		$txn = Transaction::with(['user_from', 'user_to'])
-							->where('user_from', $id)
+							->where('from', $id)
 							->orderBy('created_at', 'desc')
 							->get();
 		return $txn;

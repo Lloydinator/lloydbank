@@ -31,8 +31,8 @@ class ReceivedMoneyNotification implements ShouldQueue
         $user_to = name_explode($event->user->name);
         $phone = $event->transaction->user_from->account->phone;
         $amount = $event->transaction->amount; 
-        $message = "Hey {$user_to[0]}, {$user_from[0]} just sent you ${$amount}. "; 
-        $message .= "Check the LloydBank website for more info.";
+        $message = "Hey {$user_to[0]}, {$user_from[0]} just sent you $".$amount; 
+        $message .= ". Check the LloydBank website for more info.";
 
         $twilio = new Twilio;
         $twilio->send($phone, $message);
