@@ -5,14 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\TxnStoreRequest;
 use App\Events\TransactionMade;
-use App\Traits\NotificationTrait;
 use App\Traits\StripeHelpersTrait;
 use App\Transaction;
 use App\User;
 
 class TransactionController extends Controller
 {
-	use NotificationTrait, StripeHelpersTrait;
+	use StripeHelpersTrait;
 
 	function __construct()
 	{
@@ -49,7 +48,7 @@ class TransactionController extends Controller
 
 			$transaction->from = $fromCustomer->id;
 			$transaction->to = $toCustomer[0]->id;
-			$transaction->details = "transaction ID: ".generateRandomString(2);
+			$transaction->details = generateRandomString(2);
 			$transaction->amount = $request->amount;
 			$transaction->message = scrub($request->message);
 			$transaction->publictxn = $request->publictxn;

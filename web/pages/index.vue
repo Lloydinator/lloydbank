@@ -110,7 +110,7 @@
           <div 
             class="flex bg-white shadow-lg rounded-lg mx-auto my-4 max-w-xl md:max-w-2xl "
             v-for="mytransaction in mytransactions"
-            :key="mytransaction.id"
+            :key="mytransaction.details"
           >
             <div class="flex items-start px-4 py-6">
                 <img class="w-12 h-12 rounded-full object-cover mr-10 shadow" src="https://images.unsplash.com/photo-1542156822-6924d1a71ace?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60" alt="avatar">
@@ -217,6 +217,7 @@ export default {
         )
         let txn = response.data
         txn.forEach(data => this.mytransactions.push(data))
+        console.log(this.mytransactions)
       }
       catch(e){
         this.error = "Something went wrong"

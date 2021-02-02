@@ -71,7 +71,7 @@ class AccountController extends Controller
 
 	public function getCard(){
 		$customer = User::with('stripecustomer')->where('id', Auth::id())->get();
-		$card = $this->getPaymentMethod( $customer[0]->stripecustomer->customer_id);
+		$card = $this->getPaymentMethod($customer[0]->stripecustomer->customer_id);
 		return count($card->data) === 0 ? null : $card->data[0];
 	}
 }

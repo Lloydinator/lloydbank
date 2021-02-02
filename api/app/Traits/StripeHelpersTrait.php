@@ -27,7 +27,7 @@ trait StripeHelpersTrait {
             catch (\Stripe\Exception\CardException $e){
                 return response()->json([
                     'message' => 'Error. '.$e->getMessage()
-                ], $e->getCode() ? $e->getCode() : 500);
+                ], 400);
             }
 
             return true;
