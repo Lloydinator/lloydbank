@@ -47,11 +47,6 @@ class AccountController extends Controller
 			$customer = User::find($request->id)->stripecustomer->customer_id;
 			return $this->createSetupIntent($customer);
 		}
-		else {
-			return response()->json([
-				'message' => 'No account found to create an intent.', 
-			], 400);
-		}
 	}
 	
     public function show()
